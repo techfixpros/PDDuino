@@ -7,11 +7,16 @@ At the moment, SD2TPDD can:
 * Emulate the basic file-access functions of a TPDD1
 * Provide DME directory access
 
+This fork adds power saving sleep mode calls, a disk-activity led, support for Teensy 3.5/3.6 special card reader hardware, and the current working directory is displayed in the top-right corner of the TS-DOS display.
+
 ## Requirements
 ### Hardware
 ```
 Arduino Mega or compatible with two hardware serial ports
 SPI SD card reader with logic level shifting
+  Example boards with sd card reader already built-in:
+    Adafruit Feather 32u4 Adalogger
+    Teensy 3.5 & 3.6
 RS232 level shifter for the TPDD port going to the computer (MAX232 or MAX3232 prefered!)
 ```
 
@@ -28,7 +33,6 @@ Bill Greiman's SdFat library (downloaded from library manager)
 * Attach the SPI SD card reader to the microcontroller's power rail.
 * Attach the RS232 level shifter to the TX/RX pins of hardware serial port 1 (hardware serial port 0 is the built-in port used for debugging)
 * Attach the RS232 level shifter to the microcontroller's power rail.
-* Bridge the CTS and RTS pins on the RS232 connector (Required for TS-DOS)
 * Bridge the DTR and DSR pins on the RS232 connector (Required for TS-DOS)
 ### Software
 * Load the source file into the Arduino IDE
@@ -37,7 +41,7 @@ Bill Greiman's SdFat library (downloaded from library manager)
 * Compile the code and upload it to the microcontroller
 
 ## Notes
-If you plan on using TS-DOS, some versions require that you have a DOS100.CO file on the root of the media. This file can be downloaded from here:
+If you plan on using TS-DOS, some roms (like UR2) expect TS-DOS to be in a file named DOS100.CO on the root of the media. This file can be downloaded from here:
 http://www.club100.org/nads/dos100.co
 
 If you run into any issues, please let me know!
@@ -50,8 +54,21 @@ If you run into any issues, please let me know!
 * A command-line that can be accessed from the computer's terminal emulator for quicker file manipulation
 * Hayes modem emulation using an ESP8266
 * FTP server/client access using an ESP8266
+--
+## other To-Dos
+* RTC  (Teensy has built-in rtc)
+* play & record audio as virtual cassette  (Teensy has built-in audio, and enough cpu & ram to use it)
+* Battery level (Adalogger has built-in voltage reference and adc, and a built-in lipo charger)
 
 ## Change-log
+### 20180921 bw.aljex@gmail.com
+* Support Teensy 3.5/3.6
+* Support Adafruit Feather 32u4 Adalogger
+* Macro-ify all serial port access, debug and tpdd client
+* sleepNow() powersaving, idles at 3ma
+* dmeLabel[] & setLabel() TS-DOS shows current working dir in top-right corner
+* disk-activity led
+
 ### V0.2 (7/27/2018)
 * Added DME support
 * Corrected some file name padding bugs
