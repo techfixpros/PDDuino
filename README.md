@@ -18,20 +18,20 @@ This fork adds:
 ## Requirements
 ### Hardware
 * Arduino Mega or compatible with at least one hardware serial port
-* SPI SD card reader with logic level shifting
-: Example boards with sd card reader already built-in:
-:: Adafruit Feather 32u4 Adalogger https://learn.adafruit.com/adafruit-feather-32u4-adalogger
-:: Adafruit Feather M0 Adalogger https://learn.adafruit.com/adafruit-feather-m0-adalogger
-:: Teensy 3.5 https://www.pjrc.com/store/teensy35.html
-:: Teensy 3.6 https://www.pjrc.com/store/teensy36.html
+* SPI SD card reader with logic level shifting  
+  Example boards with sd card reader already built-in:  
+  [Adafruit Feather 32u4 Adalogger](https://learn.adafruit.com/adafruit-feather-32u4-adalogger)  
+  [Adafruit Feather M0 Adalogger](https://learn.adafruit.com/adafruit-feather-m0-adalogger)  
+  [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)  
+  [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)  
 * RS232 level shifter for the TPDD port going to the computer (MAX232 or MAX3232 prefered!)
 
 ### Software
-:Arduino IDE
-:SPI library
-:Bill Greiman's SdFat library
-:For Teensy: Teensyduino
-:For Adafruit M0: Arduino SAMD boards support, Adafruit SAMD boards support
+* Arduino IDE
+* SPI library
+* Bill Greiman's SdFat library
+* For Teensy: Teensyduino
+* For Adafruit M0: Arduino SAMD boards support, Adafruit SAMD boards support
 
 ## Assembly
 ### Hardware
@@ -47,8 +47,7 @@ This fork adds:
 * Compile the code and upload it to the microcontroller
 
 ## Notes
-If you plan on using TS-DOS, some roms (like UR2) expect TS-DOS to be in a file named DOS100.CO on the root of the media. This file can be downloaded from here:
-http://www.club100.org/nads/dos100.co
+If you plan on using TS-DOS, some roms (like UR2) expect TS-DOS to be in a file named DOS100.CO on the root of the media.   This file can be downloaded from here: http://www.club100.org/nads/dos100.co
 
 If you run into any issues, please let me know!
 
@@ -69,9 +68,9 @@ If you run into any issues, please let me know!
 
 ## Change-log
 ### 20191025 b.kenyon.w@gmail.com
-* Support Adafruit Feather M0 Adalogger
-  sleep() not implemented yet
-  needs "compiler.cpp.extra_flags=-fpermissive" in ~/.arduino15/packages/adafruit/hardware/samd/1.5.4/platform.local.txt
+* Support Adafruit Feather M0 Adalogger  
+ sleep() not implemented yet  
+ needs "compiler.cpp.extra_flags=-fpermissive" in ~/.arduino15/packages/adafruit/hardware/samd/1.5.4/platform.local.txt
 * Combine all boards support in the same code
 
 ### 20180921 b.kenyon.w@gmail.com
