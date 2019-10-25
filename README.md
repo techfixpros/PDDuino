@@ -7,25 +7,31 @@ At the moment, SD2TPDD can:
 * Emulate the basic file-access functions of a TPDD1
 * Provide DME directory access
 
-This fork adds power saving sleep mode calls, a disk-activity led, support for Teensy 3.5/3.6 special card reader hardware, and the current working directory is displayed in the top-right corner of the TS-DOS display.
+This fork adds:
+* power saving sleep mode calls
+* disk-activity led
+* support for Teensy 3.5/3.6 special card reader hardware
+* support for Adafruit Feather 32u4 Adalogger
+* support for Adafruit Feather M0 Adalogger
+* the current working directory is displayed in the top-right corner of the TS-DOS display
 
 ## Requirements
 ### Hardware
-```
-Arduino Mega or compatible with two hardware serial ports
-SPI SD card reader with logic level shifting
-  Example boards with sd card reader already built-in:
-    Adafruit Feather 32u4 Adalogger
-    Teensy 3.5 & 3.6
-RS232 level shifter for the TPDD port going to the computer (MAX232 or MAX3232 prefered!)
-```
+* Arduino Mega or compatible with at least one hardware serial port
+* SPI SD card reader with logic level shifting
+: Example boards with sd card reader already built-in:
+:: Adafruit Feather 32u4 Adalogger https://learn.adafruit.com/adafruit-feather-32u4-adalogger
+:: Adafruit Feather M0 Adalogger https://learn.adafruit.com/adafruit-feather-m0-adalogger
+:: Teensy 3.5 https://www.pjrc.com/store/teensy35.html
+:: Teensy 3.6 https://www.pjrc.com/store/teensy36.html
+* RS232 level shifter for the TPDD port going to the computer (MAX232 or MAX3232 prefered!)
 
 ### Software
-```
-Arduino IDE
-Arduino SPI library (downloaded from library manager)
-Bill Greiman's SdFat library (downloaded from library manager)
-```
+:Arduino IDE
+:SPI library
+:Bill Greiman's SdFat library
+:For Teensy: Teensyduino
+:For Adafruit M0: Arduino SAMD boards support, Adafruit SAMD boards support
 
 ## Assembly
 ### Hardware
@@ -47,6 +53,7 @@ http://www.club100.org/nads/dos100.co
 If you run into any issues, please let me know!
 
 ## To-Do
+* Document the various Arduino IDE setup and config quirks needed for each board.
 * (Done!) Move from SD.h to SDfat library for SD card access
 * (Done!) Sub-directory support
 * A protocol expansion allowing access to files greater than 64KB in size
@@ -54,14 +61,20 @@ If you run into any issues, please let me know!
 * A command-line that can be accessed from the computer's terminal emulator for quicker file manipulation
 * Hayes modem emulation using an ESP8266
 * FTP server/client access using an ESP8266
---
+
 ## other To-Dos
 * RTC  (Teensy has built-in rtc)
 * play & record audio as virtual cassette  (Teensy has built-in audio, and enough cpu & ram to use it)
 * Battery level (Adalogger has built-in voltage reference and adc, and a built-in lipo charger)
 
 ## Change-log
-### 20180921 bw.aljex@gmail.com
+### 20191025 b.kenyon.w@gmail.com
+* Support Adafruit Feather M0 Adalogger
+  sleep() not implemented yet
+  needs "compiler.cpp.extra_flags=-fpermissive" in ~/.arduino15/packages/adafruit/hardware/samd/1.5.4/platform.local.txt
+* Combine all boards support in the same code
+
+### 20180921 b.kenyon.w@gmail.com
 * Support Teensy 3.5/3.6
 * Support Adafruit Feather 32u4 Adalogger
 * Macro-ify all serial port access, debug and tpdd client
