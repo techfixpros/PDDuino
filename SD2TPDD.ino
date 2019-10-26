@@ -5,46 +5,46 @@
  * 07/27/2018
 
  * 20180921 Brian K. White bw.aljex@gmail.com
- * macroified all the console and client serial port access
+ * macro-ified all the console and client serial port access to make it configurable
  * #ifdefs to enable/disable a lot of stuff, added sleep_mode(), added disk activity led,
  * #defines for the main configurable constants, use byte instead of int or larger where possible
  * converted most number literals to hex just for cosistency and because we are using byte in place of int so much
  * added dmeLabel[] and setLabel()
  * Support Teensy 3.5 & 3.6 boards, SDIO, sleep()
  * Support Adafruit Feather 32u4 Adalogger, sleep(), 2nd led
- * Support Adafruit Feather M0 Adalogger, 2nd led - sleep() not implemented yet
+ * Support Adafruit Feather M0 Adalogger, 2nd led - compiles & runs, but actual tpdd use untested, and sleep wake interrupt might interfere with tpdd serial function
  */
 
 #define Generic         0
-#define Custom          1      // edit the "PLATFORM == Custom" block below to suit your hardware
+#define Custom          1      // edit the "BOARD == Custom" block below to suit your hardware
 #define Teensy_35       2
 #define Teensy_36       3
 #define Adalogger_32u4  4
 #define Adalogger_M0    5  // needs "compiler.cpp.extra_flags=-fpermissive" in ~/.arduino15/packages/adafruit/hardware/samd/1.5.4/platform.local.txt
 
-#define PLATFORM Teensy_36
+#define BOARD Teensy_36
 
 // log activity to serial monitor port
 // Console is set for 115200 no flow
 // 0 = serial console disabled, 1 = enabled, least verbose, 2+ = enabled, more verbose
 // When disabled, the port itself is disabled, which frees up significant ram and cpu cycles on some hardware.
-// Example, on Teensy3.5, with the port enabled at all, the sketch must be compiled to run the cpu at a minimum of 24mhz
+// Example, on Teensy3.6, with the port enabled at all, the sketch must be compiled to run the cpu at a minimum of 24mhz
 // but with the port disabled, the sketch can be compiled to run at the lowest possible option of only 2Mhz,
 // and that is still plenty enough to do the TPDD job, while burning the least amount of battery.
 #define DEBUG 0                 // disable unless actually debugging, usb-serial uses battery and cpu, and code waits for console at power-on.
-#define DEBUG_ACTIVITY_LIGHT 1  // enable the debug led in general
+#define DEBUG_ACTIVITY_LIGHT 0  // enable the debug led in general
 #define DEBUG_SLEEP 0           // use DEBUG_LED to debug sleep_mode()
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
 //--- configs for some handy boards that are small and have sd readers built in ---
 
-#if PLATFORM == Custom
+#if BOARD == Custom
   // User-defined platform details
   #define CONSOLE Serial                // where to send debug messages, if enabled
   #define CLIENT Serial1                // what serial port is the TPDD connected to
   #define SD_CS_PIN 4                   // sd card reader chip-select pin #
-  #define DISABLE_SD_CS 0               // disable CS on SD_CHIP_SELECT pin
+  #define DISABLE_SD_CS 0               // disable CS on SD_CS_PIN pin
   #define USE_SDIO 0                    // sd card reader communication method false = SPI (most boards), true = SDIO (Teensy 3.5/3.6)
   #define ENABLE_SLEEP 1                // sleep() while idle for power saving
   #define WAKE_PIN 0                    // CLIENT RX pin#, interrupt is attached to wake from sleep()
@@ -58,7 +58,7 @@
   #define DEBUG_LED_OFF digitalWrite(13,LOW);
 
 // Generic Arduino platform
-#elif PLATFORM == Generic
+#elif BOARD == Generic
   #define CONSOLE Serial
   #define CLIENT Serial1
   #define SD_CS_PIN 4
@@ -78,7 +78,7 @@
 // Teensy3.5, Teensy3.6
 // https://www.pjrc.com/store/teensy35.html
 // https://www.pjrc.com/store/teensy36.html
-#elif PLATFORM == Teensy_35 || PLATFORM == Teensy_36
+#elif BOARD == Teensy_35 || BOARD == Teensy_36
   #define CONSOLE Serial
   #define CLIENT Serial1
   #define SD_CS_PIN -1
@@ -99,7 +99,7 @@
 
 // Adafruit Feather 32u4 Adalogger
 // https://learn.adafruit.com/adafruit-feather-32u4-adalogger
-#elif PLATFORM == Adalogger_32u4
+#elif BOARD == Adalogger_32u4
   #define CONSOLE Serial
   #define CLIENT Serial1
   #define SD_CS_PIN 4
@@ -120,13 +120,13 @@
 
 // Adafruit Feather M0 Adalogger
 // https://learn.adafruit.com/adafruit-feather-m0-adalogger
-#elif PLATFORM == Adalogger_M0
+#elif BOARD == Adalogger_M0
   #define CONSOLE Serial
   #define CLIENT Serial1
   #define SD_CS_PIN 4
   #define DISABLE_SD_CS 0
   #define USE_SDIO 0
-  #define ENABLE_SLEEP 0  // M0 needs different sleep() code from AVR boards. https://forums.adafruit.com/viewtopic.php?t=120743 https://github.com/adafruit/Adafruit_SleepyDog
+  #define ENABLE_SLEEP 1
   #define WAKE_PIN 0
   #define SLEEP_INHIBIT 5000
   #define DISK_ACTIVITY_LIGHT 1
@@ -151,15 +151,13 @@
   // #define Serial SERIAL_PORT_USBVIRTUAL
   //#endif
 
-#endif // PLATFORM
-
+#endif // BOARD
 
 //
 // end of config section
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-
 #include <BlockDriver.h>
 #include <FreeStack.h>
 #include <MinimumSerial.h>
@@ -168,16 +166,21 @@
 #include <SysCall.h>
 #include <sdios.h>
 
+#if USE_SDIO
+SdFatSdioEX SD;
+#else
+SdFat SD;
+#endif
+
 // Enable use of Teensy built-in RTC
 //#include <TimeLib.h>
 
-
-// TODO- PLATFORM should be renamed to BOARD, and then PLATFORM should be used for AVR vs SAMD vs ESP etc...
-// Then this should test for AVR vs SAMD, not Adalogger_M0
 #if ENABLE_SLEEP
- #if PLATFORM != Adalogger_M0
+ #if defined(ARDUINO_SAMD_ZERO)
+  #include <ArduinoLowPower.h>
+ #else
   #include <avr/sleep.h>
- #endif // PLATFORM
+ #endif // SAMD
 #endif // ENABLE_SLEEP
 
 #if !DISK_ACTIVITY_LIGHT
@@ -209,11 +212,6 @@
 #define DIRECTORY_SZ 0x40      // size of directory[] which holds full paths
 #define FILENAME_SZ 0x18       // TPDD protocol spec 1C, minus 4 for ".<>"+NULL
 
-#if USE_SDIO
-SdFatSdioEX SD;
-#else
-SdFat SD;
-#endif
 
 File root;  //Root file for filesystem reference
 File entry; //Moving file entry for the emulator
@@ -241,7 +239,10 @@ char tempDirectory[DIRECTORY_SZ] = "/";
 char dmeLabel[0x07] = "";  // 6 chars
 
 #if ENABLE_SLEEP
-const byte wakeInterrupt = digitalPinToInterrupt(WAKE_PIN);
+ #if defined(ARDUINO_SAMD_ZERO)
+ #else
+  const byte wakeInterrupt = digitalPinToInterrupt(WAKE_PIN);
+ #endif // SAMD
   #if SLEEP_INHIBIT
 unsigned long now = millis();
 unsigned long idleSince = now;
@@ -254,6 +255,7 @@ void setup() {
   //pinMode(WAKE_PIN, INPUT_PULLUP);  // typical, but don't do on RX
   SD_LED_OFF
   DEBUG_LED_OFF
+  digitalWrite(13,LOW);  // turn main led off, regardless of SD_LED or DEBUG_LED settings
 
 // if debug console enabled, blink led and wait for console to be attached before proceeding
 #if DEBUG && defined(CONSOLE)
@@ -278,14 +280,14 @@ void setup() {
 DEBUG_PRINTL(F("Using SDIO"));
 #endif
 
-#if SD_CHIP_SELECT >= 0 && !USE_SDIO
-  #if DISABLE_CHIP_SELECT
+#if SD_CS_PIN >= 0 && !USE_SDIO
+  #if DISABLE_SD_CS
     #if DEBUG > 2
     DEBUG_PRINT(F("Disabling SPI device on pin "));
-    DEBUG_PRINTL(SD_CHIP_SELECT);
+    DEBUG_PRINTL(SD_CS_PIN);
     #endif
-    pinMode(SD_CHIP_SELECT, OUTPUT);
-    digitalWrite(SD_CHIP_SELECT, HIGH);
+    pinMode(SD_CS_PIN, OUTPUT);
+    digitalWrite(SD_CS_PIN, HIGH);
   #else
     #if DEBUG > 2
     DEBUG_PRINTL(F("Assuming the SD is the only SPI device."));  
@@ -293,7 +295,7 @@ DEBUG_PRINTL(F("Using SDIO"));
   #endif
   #if DEBUG > 2
   DEBUG_PRINT(F("Using SD chip select pin: "));
-  DEBUG_PRINTL(SD_CHIP_SELECT);
+  DEBUG_PRINTL(SD_CS_PIN);
   #endif
 #endif  // !USE_SDIO
 
@@ -316,18 +318,24 @@ void sleepNow() {
   if ((now-idleSince)<SLEEP_INHIBIT) return;
   idleSince = now;
 #endif // SLEEP_INHIBIT
-// prevent the built-in usb-serial device from powering-off if we're using it
-#if DEBUG && defined(CONSOLE)
-  set_sleep_mode(SLEEP_MODE_IDLE);
+#if defined(ARDUINO_SAMD_ZERO)
+  LowPower.attachInterruptWakeup(WAKE_PIN, wakeNow, CHANGE);
+  LowPower.sleep();
 #else
+// prevent the built-in usb-serial device from powering-off if we're using it
+ #if DEBUG && defined(CONSOLE)
+  set_sleep_mode(SLEEP_MODE_IDLE);
+ #else
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-#endif // DEBUG && CONSOLE
-#if DEBUG_SLEEP
+ #endif // DEBUG && CONSOLE
+ #if DEBUG_SLEEP
   DEBUG_LED_ON
-#endif
+ #endif
+
   attachInterrupt(wakeInterrupt,wakeNow,CHANGE);
   sleep_mode();
   detachInterrupt(wakeInterrupt);
+#endif
 #if DEBUG_SLEEP
   DEBUG_LED_OFF
 #endif
