@@ -1,5 +1,8 @@
 # SD2TPDD
 A hardware emulator of the Tandy Portable Disk Drive using an SD card for mass storage
+
+https://www.youtube.com/embed/_lFqsHAlLyg
+
 ## Verbose Description
 The SD2TPDD is a project that aims to provide an easy-to-use, cheap, and reliable mass storage solution for the TRS-80 Model 100 series of computers. 
 
