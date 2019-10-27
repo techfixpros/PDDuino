@@ -69,6 +69,27 @@ If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by l
 * Hayes modem emulation using an ESP8266
 * FTP server/client access using an ESP8266
 
+## BUGS
+* Works with real TS-DOS, but file transfers don't actually work with TpddTool.py  
+This seems to be due to mis-matches in handling the space-padding in the filenames?
+
+* Some kind of working directory initial/default state issue, which affects Ultimate Rom II loading DOS100.CO on the fly.
+If you have DOS100.CO in ram, then UR-2 works all the time, because it will use that copy if available.  
+TS-DOS from rom or ram, not via UR-2, seems to be working pretty well all the time.  
+TS-DOS from rom or ram, not via UR-2, can successfully load a file like DOS100.CO from the root dir, but Ultimate Rom 2 usually can not load that same file, but sometimes it can.  
+If you try to use TS-DOS from UR2 after a fresh power-cycle of both Arduino and M100, It doesn't work.  
+But If you load TS-DOS some other way (for example, use a REX to switch to TS-DOS rom), and use TS-DOS to read the directory listing once, then switch roms back to UR-2, THEN the TS-DOS menu entry in UR-2 works (successfully loads DOS100.CO from the disk).  
+Maybe TS-DOS does some kind of initialization that UR-2 isn't doing?  
+UR-2 works fine with a real TPDD/TPDD2 and other emulators like dlplus and LaddieAlpha, so maybe there is some sort of default condition that we should be resetting to?  
+
+* If you use UR-2 to load TS-DOS in ram, and switch to a subdirectory like /Games while in TS-DOS, then exit TS-DOS, then you can't use TS-DOS any more, because the next time UR-2 tries to load DOS100.CO from disk, SD2TPDD looks for /Games/DOS100.CO, which does not exist. (Maybe a real TPDD does this too?)
+
+* When UR-2 loads DOS100.CO, sucessfully or not, the LED doesn't shut off after.
+
+* Displays the "PARENT.<>" directory entry even when you are already in the root dir.  
+Goes away if you try to open PARENT.<> when you're already in root.
+
+
 ## Change-log
 ### 20191025 b.kenyon.w@gmail.com
 * Support Adafruit Feather M0 Adalogger  
