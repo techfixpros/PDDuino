@@ -18,28 +18,31 @@ This fork adds:
 ## Requirements
 ### Hardware
 * Arduino Mega or compatible with at least one hardware serial port
-* SPI SD card reader with logic level shifting  
+* SD card reader  
   Example boards with sd card reader already built-in:  
   [Adafruit Feather 32u4 Adalogger](https://learn.adafruit.com/adafruit-feather-32u4-adalogger)  
   [Adafruit Feather M0 Adalogger](https://learn.adafruit.com/adafruit-feather-m0-adalogger)  
   [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)  
   [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)  
-* RS232 level shifter for the TPDD port going to the computer (MAX232 or MAX3232 prefered!)
+* RS232 level shifter for the serial port going to the TPDD client (to the M100)
 
 ### Software
 * Arduino IDE
 * SPI library
 * Bill Greiman's SdFat library
 * For Teensy: Teensyduino
-* For Adafruit M0: Arduino SAMD boards support, Adafruit SAMD boards support
+* For Adafruit Feather M0: Arduino SAMD boards support, Adafruit SAMD boards support
 
 ## Assembly
 ### Hardware
-* Attach the SPI SD card reader to the microcontroller using its SPI bus. Connect the SD card reader's chip select pin to the pin specified by the chipSelect variable (default is pin 4).
-* Attach the SPI SD card reader to the microcontroller's power rail.
-* Attach the RS232 level shifter to the TX/RX pins of hardware serial port 1 (hardware serial port 0 is the built-in port used for debugging)
-* Attach the RS232 level shifter to the microcontroller's power rail.
-* Bridge the DTR and DSR pins on the RS232 connector (Required for TS-DOS)
+* SD Card reader (if not using a board with built-in card reader):  
+ Attach the SPI SD card reader to the microcontroller using its SPI bus.  
+ Connect the SD card reader's chip select pin to the pin specified by the SD_CS_PIN variable (default is pin 4).  
+ Attach the SPI SD card reader to the microcontroller's power rail.
+* Serial port:  
+ Attach an RS232 level shifter to the TX/RX pins of a hardware serial port.
+ Power the RS232 level shifter from the microcontroller's power rail, not for example from a separate 5v source, to ensure the rx/tx signal levels coming from the level shifter will safely match the microcontroller.  
+ Bridge the DTR and DSR pins on the RS232 connector (Required for TS-DOS).
 ### Software
 * Load the source file into the Arduino IDE
 * Download the SPI and SdFat libraries from the library manager
@@ -47,31 +50,28 @@ This fork adds:
 * Compile the code and upload it to the microcontroller
 
 ## Notes
-If you plan on using TS-DOS, some roms (like UR2) expect TS-DOS to be in a file named DOS100.CO on the root of the media.   This file can be downloaded from here: http://www.club100.org/nads/dos100.co
-
-If you run into any issues, please let me know!
+If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from here: http://www.club100.org/nads/dos100.co
 
 ## To-Do
 * Document the various Arduino IDE setup and config quirks needed for each board.
-* (Done!) Move from SD.h to SDfat library for SD card access
-* (Done!) Sub-directory support
+* Teeny and/or TS-DOS installer
+
+## other To-Dos, or merely ideas
+* RTC  (Teensy has built-in rtc)
+* play & record audio as virtual cassette  (Teensy has built-in audio, and enough cpu & ram to use it)
+* Battery level (Adalogger has built-in voltage reference and adc, and a built-in lipo charger)
 * A protocol expansion allowing access to files greater than 64KB in size
 * Full NADSBox compatibility
 * A command-line that can be accessed from the computer's terminal emulator for quicker file manipulation
 * Hayes modem emulation using an ESP8266
 * FTP server/client access using an ESP8266
 
-## other To-Dos
-* RTC  (Teensy has built-in rtc)
-* play & record audio as virtual cassette  (Teensy has built-in audio, and enough cpu & ram to use it)
-* Battery level (Adalogger has built-in voltage reference and adc, and a built-in lipo charger)
-
 ## Change-log
 ### 20191025 b.kenyon.w@gmail.com
 * Support Adafruit Feather M0 Adalogger  
- sleep() not implemented yet  
  needs "compiler.cpp.extra_flags=-fpermissive" in ~/.arduino15/packages/adafruit/hardware/samd/1.5.4/platform.local.txt
-* Combine all boards support in the same code
+* Combine all boards supported into the same code  
+ Time to break this out into a config.h file?
 
 ### 20180921 b.kenyon.w@gmail.com
 * Support Teensy 3.5/3.6
