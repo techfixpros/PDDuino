@@ -82,7 +82,7 @@ But If you load TS-DOS some other way (for example, use a REX to switch to TS-DO
 Maybe TS-DOS does some kind of initialization that UR-2 isn't doing?  
 UR-2 works fine with a real TPDD/TPDD2 and other emulators like dlplus and LaddieAlpha, so maybe there is some sort of default condition that we should be resetting to?  
 
-* If you use UR-2 to load TS-DOS in ram, and switch to a subdirectory like /Games while in TS-DOS, then exit TS-DOS, then you can't use TS-DOS any more, because the next time UR-2 tries to load DOS100.CO from disk, SD2TPDD looks for /Games/DOS100.CO, which does not exist. (Maybe a real TPDD does this too?)
+* If you use UR-2 to load TS-DOS in ram, and switch to a subdirectory like /Games while in TS-DOS, then exit TS-DOS, then you can't use TS-DOS any more, because the next time UR-2 tries to load DOS100.CO from disk, SD2TPDD looks for /Games/DOS100.CO, which does not exist.
 
 * When UR-2 loads DOS100.CO, sucessfully or not, the LED doesn't shut off after.
 
