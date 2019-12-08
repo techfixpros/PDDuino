@@ -52,7 +52,12 @@ Example arduino-compatible boards with sd card reader already built-in:
 * Load the source file into the Arduino IDE
 * Download the SPI and SdFat libraries from the library manager
 * Make any changes if needed
+  There are many configuration options in the form of #defines at the top of the file.  
+  The main one you need to set is PLATFORM to select what type of board to build for. Many other things automatically derive from that, for the few built-in supported boards liek teensy and adalogger.
 * Compile the code and upload it to the microcontroller
+  You will need to consult your board's documentation to set up the Arduino IDE correctly to to program the board.  
+  This usually means installing one or more board support libraries, and selecting the board type from the tools menu.  
+  In the case of Teensy, you also should install "Teensyduino", and there are more options on the tools menu such as setting the cpu clock speed. You can underclock the teensy to save even more battery.
 
 ## Notes
 If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from here: http://www.club100.org/nads/dos100.co
