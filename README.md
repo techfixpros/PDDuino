@@ -22,12 +22,14 @@ This fork adds:
 ### Hardware
 * Arduino Mega or compatible with at least one hardware serial port
 * SD card reader  
-  Example boards with sd card reader already built-in:  
+* RS232 level shifter for the serial port going to the TPDD client (to the M100)
+
+Example arduino-compatible boards with sd card reader already built-in:  
   [Adafruit Feather 32u4 Adalogger](https://learn.adafruit.com/adafruit-feather-32u4-adalogger)  
   [Adafruit Feather M0 Adalogger](https://learn.adafruit.com/adafruit-feather-m0-adalogger)  
   [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)  
   [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)  
-* RS232 level shifter for the serial port going to the TPDD client (to the M100)
+
 
 ### Software
 * Arduino IDE
