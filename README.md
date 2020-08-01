@@ -1,4 +1,4 @@
-# SD2TPDD
+# PDDuino
 A hardware emulator of the Tandy Portable Disk Drive using an SD card for mass storage
 
 [![Video of SD2TPDD running on a Teeensy 3.5](http://img.youtube.com/vi/_lFqsHAlLyg/hqdefault.jpg)](https://youtu.be/_lFqsHAlLyg "SD2TPDD on a Teensy 3.5")
@@ -6,9 +6,10 @@ A hardware emulator of the Tandy Portable Disk Drive using an SD card for mass s
 [![Video of SD2TPDD running on a Adafruit Feather 32u4 Adalogger](http://img.youtube.com/vi/kQyY_Z1aGy8/hqdefault.jpg)](https://youtu.be/kQyY_Z1aGy8 "SD2TPDD on Adafruit Feather 32u4 Adalogger")
 
 ## Verbose Description
-The SD2TPDD is a project that aims to provide an easy-to-use, cheap, and reliable mass storage solution for the TRS-80 Model 100 series of computers. 
+PDDuino is forked from SD2TPDD, and is largely still the same as SD2TPDD.  
+This project aims to provide an easy-to-use, cheap, and reliable mass storage solution for the TRS-80 Model 100 series of computers.  
 
-At the moment, SD2TPDD can:
+At the moment, PDDuino can:
 * Emulate the basic file-access functions of a TPDD1
 * Provide DME directory access
 
@@ -75,7 +76,7 @@ If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by l
 * A protocol expansion allowing access to files greater than 64KB in size
 * Full NADSBox compatibility
 * A command-line that can be accessed from the computer's terminal emulator for quicker file manipulation
-* Hayes modem emulation using an ESP8266
+* Hayes modem emulation using an ESP8266 (<https://www.cbmstuff.com/proddetail.php?prod=WiModem232>)
 * FTP server/client access using an ESP8266
 
 ## BUGS
@@ -113,6 +114,8 @@ Goes away if you try to open PARENT.<> when you're already in root.
 * sleepNow() powersaving, idles at 3ma
 * dmeLabel[] & setLabel() TS-DOS shows current working dir in top-right corner
 * disk-activity led
+
+---
 
 ### V0.2 (7/27/2018)
 * Added DME support
