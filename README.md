@@ -62,7 +62,7 @@ Example arduino-compatible boards with sd card reader already built-in:
   In the case of Teensy, you also should install "Teensyduino", and there are more options on the tools menu such as setting the cpu clock speed. You can underclock the teensy to save even more battery.
 
 ## Power from BCR port  
-![](https://github.com/bkw777/BCR_USB_PWR/blob/master/BCR_USB_PWR.png)  
+<!-- ![](https://github.com/bkw777/BCR_USB_PWR/blob/master/BCR_USB_PWR.png)  -->
 You can power the WiModem232 from the computer with this [BCR-USB-Power adapter](https://github.com/bkw777/BCR_USB_Breakout)  
  and a usb cable.
 
