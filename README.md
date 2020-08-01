@@ -33,7 +33,6 @@ Example arduino-compatible boards with sd card reader already built-in:
   [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)  
   [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)  
 
-
 ### Software
 * Arduino IDE
 * SPI library
@@ -61,6 +60,11 @@ Example arduino-compatible boards with sd card reader already built-in:
   You will need to consult your board's documentation to set up the Arduino IDE correctly to to program the board.  
   This usually means installing one or more board support libraries, and selecting the board type from the tools menu.  
   In the case of Teensy, you also should install "Teensyduino", and there are more options on the tools menu such as setting the cpu clock speed. You can underclock the teensy to save even more battery.
+
+## Power from BCR port  
+![](https://github.com/bkw777/BCR_USB_PWR/blob/master/BCR_USB_PWR.png)  
+You can power the WiModem232 from the computer with this [BCR-USB-Power adapter](https://github.com/bkw777/BCR_USB_Breakout)  
+ and a usb cable.
 
 ## Notes
 If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from here: http://www.club100.org/nads/dos100.co
