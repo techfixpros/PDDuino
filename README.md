@@ -32,6 +32,17 @@ Example arduino-compatible boards with sd card reader already built-in:
   [Adafruit Feather M0 Adalogger](https://learn.adafruit.com/adafruit-feather-m0-adalogger)  
   [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)  
   [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)  
+  (not yet tested/ported, way overkill)[Teensy 4.1](https://www.pjrc.com/store/teensy41.html)  
+  (TODO:)[OpenLog](https://www.ebay.com/sch/i.html?_nkw=OpenLog)  
+
+RS-232<-->TTL level-shifter module:
+  [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/) (Has DTE pinout. Use the same null-modem cable as for a PC bwith no other adapters needed.)
+
+RS-232 cable:
+  With the specific level-shifter module above, with male pins and DTE pinout: [https://www.pccables.com/products/00103.html PCCables 0103]  
+  Or [[http://tandy.wiki/Model_100_102_200_600_Serial_Cable Any of These]]
+
+Optional: [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 
 ### Software
 * Arduino IDE
@@ -42,6 +53,7 @@ Example arduino-compatible boards with sd card reader already built-in:
 
 ## Assembly
 ### Hardware
+See http://tandy.wiki/TPDD_Cable  
 * SD Card reader (if not using a board with built-in card reader):  
  Attach the SPI SD card reader to the microcontroller using its SPI bus.  
  Connect the SD card reader's chip select pin to the pin specified by the SD_CS_PIN variable (default is pin 4).  
@@ -63,7 +75,7 @@ Example arduino-compatible boards with sd card reader already built-in:
 
 ## Power from BCR port  
 <!-- ![](https://github.com/bkw777/BCR_USB_PWR/blob/master/BCR_USB_PWR.png)  -->
-You can power the WiModem232 from the computer with this [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout)  
+You can power the Arduino from the computer with this [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout)  
  and a usb cable.
 
 ## Notes
