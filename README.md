@@ -33,10 +33,10 @@ Arduino-compatible boards with sd card reader already built-in:
   [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)  
   [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)  
   (not yet tested/ported, way overkill)[Teensy 4.1](https://www.pjrc.com/store/teensy41.html)  
-  (TODO:)[OpenLog](https://www.ebay.com/sch/i.html?_nkw=OpenLog)  
+  (not yet tried, TODO)[OpenLog](https://www.ebay.com/sch/i.html?_nkw=OpenLog)  
 
 RS-232<-->TTL level-shifter module:  
-  [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/)
+  [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/)  
   (Has DTE pinout. Use the same null-modem cable as for a PC bwith no other adapters needed.)
 
 RS-232 cable:  
