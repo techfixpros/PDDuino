@@ -27,7 +27,7 @@ This fork adds:
 * SD card reader  
 * RS232 level shifter for the serial port going to the TPDD client (to the M100)
 
-Example arduino-compatible boards with sd card reader already built-in:  
+Arduino-compatible boards with sd card reader already built-in:  
   [Adafruit Feather 32u4 Adalogger](https://learn.adafruit.com/adafruit-feather-32u4-adalogger)  
   [Adafruit Feather M0 Adalogger](https://learn.adafruit.com/adafruit-feather-m0-adalogger)  
   [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)  
@@ -35,10 +35,11 @@ Example arduino-compatible boards with sd card reader already built-in:
   (not yet tested/ported, way overkill)[Teensy 4.1](https://www.pjrc.com/store/teensy41.html)  
   (TODO:)[OpenLog](https://www.ebay.com/sch/i.html?_nkw=OpenLog)  
 
-RS-232<-->TTL level-shifter module:
-  [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/) (Has DTE pinout. Use the same null-modem cable as for a PC bwith no other adapters needed.)
+RS-232<-->TTL level-shifter module:  
+  [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/)
+  (Has DTE pinout. Use the same null-modem cable as for a PC bwith no other adapters needed.)
 
-RS-232 cable:
+RS-232 cable:  
   With the specific level-shifter module above, with male pins and DTE pinout: [https://www.pccables.com/products/00103.html PCCables 0103]  
   Or [[http://tandy.wiki/Model_100_102_200_600_Serial_Cable Any of These]]
 
