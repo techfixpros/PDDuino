@@ -40,8 +40,8 @@ RS-232<-->TTL level-shifter module:
   (Has DTE pinout. Use the same null-modem cable as for a PC bwith no other adapters needed.)
 
 RS-232 cable:  
-  With the specific level-shifter module above, with male pins and DTE pinout: [https://www.pccables.com/products/00103.html PCCables 0103]  
-  Or [[http://tandy.wiki/Model_100_102_200_600_Serial_Cable Any of These]]
+  With the specific level-shifter module above, with male pins and DTE pinout: [PCCables 0103](https://www.pccables.com/products/00103.html)  
+  Or [Any of these](http://tandy.wiki/Model_100_102_200_600_Serial_Cable)
 
 Optional: [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 
