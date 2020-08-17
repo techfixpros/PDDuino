@@ -5,11 +5,14 @@
 ![](PDDuino_Feather_1.jpg)  
 ![](PDDuino_Feather_2.jpg)
 
-Complete BOM, including Feather 32u4 Adalogger board, 105mah lipo battery, and pin header sockets: <https://www.digikey.com/short/zr423m><br>
+Get the PCB from OSHPark: <https://oshpark.com/shared_projects/0NVCii0o><br>
+Get the parts from Digi-Key: <https://www.digikey.com/short/zr423m><br>
 
-You may remove the following items from the cart:<br>
+The Digi-Key cart is a complete BOM, including Feather 32u4 Adalogger board, 105mah lipo battery, and pin header sockets.<br>
+
+You may want to remove any/all the following from the cart:<br>
 * Battery - If you use the BCR port or other usb power source, then you don't need the battery.<br>
-* Socket headers - If you want to solder the Adalogger board using the pins it comes with, then you don't need the sockets.<br>
+* Socket headers - If you want to solder the Adalogger board, then you don't need the sockets.<br>
 * Adalogger board - If you already have one, you don't necessarily need more.
 
 The same PDDuino_Feather adapter board works for both the 32u4 and the M0 versions of Adalogger boards.
