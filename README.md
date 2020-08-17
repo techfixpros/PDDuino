@@ -56,8 +56,8 @@ Optional: [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 ### Hardware
 
 #### New hardware using custom adapter board - STILL IN TESTING
-![](PCB/PDDuino_Feather_1.jpg  
-![](PCB/PDDuino_Feather_2.jpg  
+![](PCB/PDDuino_Feather_1.jpg)  
+![](PCB/PDDuino_Feather_2.jpg)  
 See the PCB directory.  
 Currently there is a board for Adafruit Feather boards.  
 The same adapter works with either the Feather 32u4 Adalogger  or  Feather M0 Adalogger  
