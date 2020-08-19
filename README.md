@@ -1,12 +1,12 @@
 # PDDuino
 A hardware emulator of the Tandy Portable Disk Drive using an SD card for mass storage
 
-[![Video of SD2TPDD running on a Teeensy 3.5](http://img.youtube.com/vi/_lFqsHAlLyg/hqdefault.jpg)](https://youtu.be/_lFqsHAlLyg "SD2TPDD on a Teensy 3.5")
+[![Video of PDDuino running on a Teeensy 3.5](http://img.youtube.com/vi/_lFqsHAlLyg/hqdefault.jpg)](https://youtu.be/_lFqsHAlLyg "SD2TPDD on a Teensy 3.5")
 
-[![Video of SD2TPDD running on a Adafruit Feather 32u4 Adalogger](http://img.youtube.com/vi/kQyY_Z1aGy8/hqdefault.jpg)](https://youtu.be/kQyY_Z1aGy8 "SD2TPDD on Adafruit Feather 32u4 Adalogger")
+[![Video of PDDuino running on a Adafruit Feather 32u4 Adalogger](http://img.youtube.com/vi/kQyY_Z1aGy8/hqdefault.jpg)](https://youtu.be/kQyY_Z1aGy8 "SD2TPDD on Adafruit Feather 32u4 Adalogger")
 
 ## Verbose Description
-PDDuino is forked from SD2TPDD, and is largely still the same as SD2TPDD.  
+PDDuino is forked from SD2TPDD.  
 This project aims to provide an easy-to-use, cheap, and reliable mass storage solution for the TRS-80 Model 100 series of computers.  
 
 At the moment, PDDuino can:
@@ -19,7 +19,8 @@ This fork adds:
 * support for Teensy 3.5/3.6 special card reader hardware
 * support for Adafruit Feather 32u4 Adalogger
 * support for Adafruit Feather M0 Adalogger
-* the current working directory is displayed in the top-right corner of the TS-DOS display
+* the current working directory is displayed in TS-DOS
+* TPDD2-style bootstrap
 
 ## Requirements
 ### Hardware
