@@ -1,18 +1,21 @@
 /*
+ * PDDuino
+ * 20180921 Brian K. White b.kenyon.w@gmail.com
+ * macro-ified all the console and client serial port access to make it configurable
+ * #ifdefs to enable/disable a lot of stuff
+ * added sleep_mode()
+ * added disk activity led
+ * #defines for the main configurable constants, use byte instead of int or larger where possible
+ * converted most number literals to hex just for cosistency and because we are using byte in place of int so much
+ * added dmeLabel[] and setLabel() - this shows the current sd card directory in TS-DOS
+ * Support Teensy 3.5 & 3.6 boards, SDIO, sleep()
+ * Support Adafruit Feather 32u4 Adalogger, sleep(), 2nd led
+ * Support Adafruit Feather M0 Adalogger, sleep(), 2nd led
+ *
  * SD2TPDD  V0.2
  * A TPDD emulator for the Arduino Mega that uses an SD card for mass storage.
  * Written by Jimmy Pettit
  * 07/27/2018
-
- * 20180921 Brian K. White bw.aljex@gmail.com
- * macro-ified all the console and client serial port access to make it configurable
- * #ifdefs to enable/disable a lot of stuff, added sleep_mode(), added disk activity led,
- * #defines for the main configurable constants, use byte instead of int or larger where possible
- * converted most number literals to hex just for cosistency and because we are using byte in place of int so much
- * added dmeLabel[] and setLabel()
- * Support Teensy 3.5 & 3.6 boards, SDIO, sleep()
- * Support Adafruit Feather 32u4 Adalogger, sleep(), 2nd led
- * Support Adafruit Feather M0 Adalogger, 2nd led - compiles & runs, but actual tpdd use untested, and sleep wake interrupt might interfere with tpdd serial function
  */
 
 #define Generic         0
@@ -22,7 +25,7 @@
 #define Adalogger_32u4  4
 #define Adalogger_M0    5  // needs "compiler.cpp.extra_flags=-fpermissive" in ~/.arduino15/packages/adafruit/hardware/samd/1.5.4/platform.local.txt
 
-#define BOARD Teensy_36
+#define BOARD Adalogger_32u4
 
 // log activity to serial monitor port
 // Console is set for 115200 no flow
@@ -42,8 +45,11 @@
 #if BOARD == Custom
   // User-defined platform details
   #define CONSOLE Serial                // where to send debug messages, if enabled
-  #define CLIENT Serial1                // what serial port is the TPDD connected to
+  #define CLIENT Serial1                // what serial port is the TPDD client connected to
+  #define DTR_PIN 5						// pin to output DTR
+  #define DSR_PIN 6						// pin to input DSR
   #define SD_CS_PIN 4                   // sd card reader chip-select pin #
+  //#define SD_CD_PIN 7                   // sd card reader card-detect pin #
   #define DISABLE_SD_CS 0               // disable CS on SD_CS_PIN pin
   #define USE_SDIO 0                    // sd card reader communication method false = SPI (most boards), true = SDIO (Teensy 3.5/3.6)
   #define ENABLE_SLEEP 1                // sleep() while idle for power saving
@@ -61,7 +67,10 @@
 #elif BOARD == Generic
   #define CONSOLE Serial
   #define CLIENT Serial1
+  #define DTR_PIN 5
+  #define DSR_PIN 6
   #define SD_CS_PIN 4
+  //#define SD_CD_PIN 7
   #define DISABLE_SD_CS 0
   #define USE_SDIO 0
   #define ENABLE_SLEEP 1
@@ -78,10 +87,22 @@
 // Teensy3.5, Teensy3.6
 // https://www.pjrc.com/store/teensy35.html
 // https://www.pjrc.com/store/teensy36.html
+// Teensy 3.6 has no CD pin and no good alternative way to detect card.
+// https://forum.pjrc.com/threads/43422-Teensy-3-6-SD-card-detect
+// Might be able to use comment #10 idea.
+//   #define CPU_RESTART_ADDR (uint32_t *)0xE000ED0C
+//   #define CPU_RESTART_VAL 0x5FA0004
+//   #define CPU_RESTART (*CPU_RESTART_ADDR = CPU_RESTART_VAL);
+//   ...
+//   if (!sd.exists("settings.txt")) { CPU_RESTART }
+//
 #elif BOARD == Teensy_35 || BOARD == Teensy_36
   #define CONSOLE Serial
   #define CLIENT Serial1
+  #define DTR_PIN 5
+  #define DSR_PIN 6
   #define SD_CS_PIN -1
+  //#define SD_CD_PIN 7
   #define DISABLE_SD_CS 0
   #define USE_SDIO 1
   #define ENABLE_SLEEP 1
@@ -99,10 +120,24 @@
 
 // Adafruit Feather 32u4 Adalogger
 // https://learn.adafruit.com/adafruit-feather-32u4-adalogger
+// GPIO #4 - used as the MicroSD card CS (chip select) pin
+// GPIO #7 - used as the MicroSD card CD (card detect) pin.
+//           If you want to detect when a card is inserted/removed, configure this pin as an input with a pullup.
+//           When the pin reads low (0V) then there is no card inserted. When the pin reads high, then a card is in place.
+//           It will not tell you if the card is valid, its just a mechanical switch.
+// GPIO #8 - Green LED next to the SD card.
+//
+// TODO:
+// Write DTR on GPIO #5
+// Read DSR on GPIO #6
+//
 #elif BOARD == Adalogger_32u4
   #define CONSOLE Serial
   #define CLIENT Serial1
+  #define DTR_PIN 5
+  #define DSR_PIN 6
   #define SD_CS_PIN 4
+  //#define SD_CD_PIN 7
   #define DISABLE_SD_CS 0
   #define USE_SDIO 0
   #define ENABLE_SLEEP 1
@@ -120,10 +155,24 @@
 
 // Adafruit Feather M0 Adalogger
 // https://learn.adafruit.com/adafruit-feather-m0-adalogger
+// GPIO #4 - used as the MicroSD card CS (chip select) pin
+// GPIO #7 - used as the MicroSD card CD (card detect) pin.
+//           If you want to detect when a card is inserted/removed, configure this pin as an input with a pullup.
+//           When the pin reads low (0V) then there is no card inserted. When the pin reads high, then a card is in place.
+//           It will not tell you if the card is valid, its just a mechanical switch.
+// GPIO #8 - Green LED next to the SD card.
+//
+// TODO:
+// Write DTR on GPIO #5
+// Read DSR on GPIO #6
+//
 #elif BOARD == Adalogger_M0
   #define CONSOLE Serial
   #define CLIENT Serial1
+  #define DTR_PIN 5
+  #define DSR_PIN 6
   #define SD_CS_PIN 4
+  //#define SD_CD_PIN 7
   #define DISABLE_SD_CS 0
   #define USE_SDIO 0
   #define ENABLE_SLEEP 1
@@ -249,58 +298,6 @@ unsigned long idleSince = now;
   #endif // SLEEP_INHIBIT
 #endif // ENABLE_SLEEP
 
-void setup() {
-  PINMODE_SD_LED_OUTPUT
-  PINMODE_DEBUG_LED_OUTPUT
-  //pinMode(WAKE_PIN, INPUT_PULLUP);  // typical, but don't do on RX
-  SD_LED_OFF
-  DEBUG_LED_OFF
-  digitalWrite(13,LOW);  // turn main led off, regardless of SD_LED or DEBUG_LED settings
-
-// if debug console enabled, blink led and wait for console to be attached before proceeding
-#if DEBUG && defined(CONSOLE)
-  CONSOLE.begin(115200);
-    while(!CONSOLE){
-      DEBUG_LED_ON
-      delay(0x60);
-      DEBUG_LED_OFF
-      delay(0x60);
-    }
-  CONSOLE.flush();
-#endif
-
-  CLIENT.begin(19200);
-  CLIENT.flush();
-
-  DEBUG_PRINTL(F("\r\n-----------[ SD2TPDD setup() ]------------"));
-
-  for(byte i=0x00;i<FILE_BUFFER_SZ;++i) dataBuffer[i] = 0x00;
-
-#if DEBUG > 2 && USE_SDIO
-DEBUG_PRINTL(F("Using SDIO"));
-#endif
-
-#if SD_CS_PIN >= 0 && !USE_SDIO
-  #if DISABLE_SD_CS
-    #if DEBUG > 2
-    DEBUG_PRINT(F("Disabling SPI device on pin "));
-    DEBUG_PRINTL(SD_CS_PIN);
-    #endif
-    pinMode(SD_CS_PIN, OUTPUT);
-    digitalWrite(SD_CS_PIN, HIGH);
-  #else
-    #if DEBUG > 2
-    DEBUG_PRINTL(F("Assuming the SD is the only SPI device."));  
-    #endif
-  #endif
-  #if DEBUG > 2
-  DEBUG_PRINT(F("Using SD chip select pin: "));
-  DEBUG_PRINTL(SD_CS_PIN);
-  #endif
-#endif  // !USE_SDIO
-
-  initCard();
-}
 
 /*
  *
@@ -396,13 +393,39 @@ void initCard () {
   SD_LED_OFF
 }
 
+void(* restart) (void) = 0;
+
+// TPDD2-style bootstrap
+// TODO, some way to show the directions to the user
+void sendLoader() {
+  byte b = 0x00;
+  File f = SD.open("LOADER.DO");
+  if (f) {
+    SD_LED_ON
+    DEBUG_PRINTL(F("Sending LOADER.DO..."));
+      while (f.available()) {
+        b = f.read();
+        CLIENT.write(b);
+        delay(0x05);
+      }
+    f.close();
+    SD_LED_OFF
+    CLIENT.write(0x1A);
+    CLIENT.flush();
+    CLIENT.end();
+  } else {
+    DEBUG_PRINTL(F("Could not find LOADER.DO"));
+  }
+  restart();
+}
+
 #if DEBUG
 void printDirectory(File dir, byte numTabs) {
   char fileName[FILENAME_SZ] = "";
 
   SD_LED_ON
   while (true) {
-    File entry = dir.openNextFile();
+    entry = dir.openNextFile();
     if (!entry) break;
     entry.getName(fileName,FILENAME_SZ);
     for (byte i = 0x00; i < numTabs; i++) DEBUG_PRINT(F("\t"));
@@ -909,6 +932,80 @@ void command_DMEReq() {  //Send the dmeLabel
   }
 }
 
+
+/*
+ *
+ * Power-On
+ *
+ */
+
+void setup() {
+  PINMODE_SD_LED_OUTPUT
+  PINMODE_DEBUG_LED_OUTPUT
+  //pinMode(WAKE_PIN, INPUT_PULLUP);  // typical, but don't do on RX
+  SD_LED_OFF
+  DEBUG_LED_OFF
+  digitalWrite(13,LOW);  // turn main led off, regardless of SD_LED or DEBUG_LED settings
+
+  // DSR/DTR
+  pinMode(DTR_PIN, OUTPUT);
+  digitalWrite(DTR_PIN,LOW);  // tell client we're not ready
+  pinMode(DSR_PIN, INPUT);
+
+// if debug console enabled, blink led and wait for console to be attached before proceeding
+#if DEBUG && defined(CONSOLE)
+  CONSOLE.begin(115200);
+    while(!CONSOLE){
+      DEBUG_LED_ON
+      delay(0x60);
+      DEBUG_LED_OFF
+      delay(0x60);
+    }
+  CONSOLE.flush();
+#endif
+
+  CLIENT.begin(19200);
+  CLIENT.flush();
+
+  DEBUG_PRINTL(F("\r\n-----------[ PDDuino setup() ]------------"));
+
+  for(byte i=0x00;i<FILE_BUFFER_SZ;++i) dataBuffer[i] = 0x00;
+
+#if DEBUG > 2 && USE_SDIO
+DEBUG_PRINTL(F("Using SDIO"));
+#endif
+
+#if SD_CS_PIN >= 0 && !USE_SDIO
+  #if DISABLE_SD_CS
+    #if DEBUG > 2
+    DEBUG_PRINT(F("Disabling SPI device on pin "));
+    DEBUG_PRINTL(SD_CS_PIN);
+    #endif
+    pinMode(SD_CS_PIN, OUTPUT);
+    digitalWrite(SD_CS_PIN, HIGH);
+  #else
+    #if DEBUG > 2
+    DEBUG_PRINTL(F("Assuming the SD is the only SPI device."));  
+    #endif
+  #endif
+  #if DEBUG > 2
+  DEBUG_PRINT(F("Using SD chip select pin: "));
+  DEBUG_PRINTL(SD_CS_PIN);
+  #endif
+#endif  // !USE_SDIO
+
+  initCard();
+
+  digitalWrite(DTR_PIN,HIGH); // tell client we're ready
+
+  // Possible TPDD2-style automatic bootstrap.
+  // If client is waiting already at power-on,
+  // then send LOADER.BA before going into main loop()
+  if(digitalRead(DSR_PIN)) sendLoader();
+
+}
+
+
 /*
  *
  * Main code loop
@@ -921,7 +1018,7 @@ void loop() {
   byte diff = 0x00;  //Difference between the head and tail buffer indexes
 
   DEBUG_PRINTL(F("loop(): start"));
-  state = 0x00; //0 = waiting for command 1 = waiting for full command 2 = have full command
+  state = 0x00; //0 = waiting for command, 1 = waiting for full command, 2 = have full command
 
 #if ENABLE_SLEEP
   sleepNow();

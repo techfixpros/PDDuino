@@ -1,12 +1,12 @@
 # PDDuino
 A hardware emulator of the Tandy Portable Disk Drive using an SD card for mass storage
 
-[![Video of PDDuino running on a Teeensy 3.5](http://img.youtube.com/vi/_lFqsHAlLyg/hqdefault.jpg)](https://youtu.be/_lFqsHAlLyg "SD2TPDD on a Teensy 3.5")
+[![Video of SD2TPDD running on a Teeensy 3.5](http://img.youtube.com/vi/_lFqsHAlLyg/hqdefault.jpg)](https://youtu.be/_lFqsHAlLyg "SD2TPDD on a Teensy 3.5")
 
-[![Video of PDDuino running on a Adafruit Feather 32u4 Adalogger](http://img.youtube.com/vi/kQyY_Z1aGy8/hqdefault.jpg)](https://youtu.be/kQyY_Z1aGy8 "SD2TPDD on Adafruit Feather 32u4 Adalogger")
+[![Video of SD2TPDD running on a Adafruit Feather 32u4 Adalogger](http://img.youtube.com/vi/kQyY_Z1aGy8/hqdefault.jpg)](https://youtu.be/kQyY_Z1aGy8 "SD2TPDD on Adafruit Feather 32u4 Adalogger")
 
 ## Verbose Description
-PDDuino is forked from SD2TPDD.  
+PDDuino is forked from SD2TPDD, and is largely still the same as SD2TPDD.  
 This project aims to provide an easy-to-use, cheap, and reliable mass storage solution for the TRS-80 Model 100 series of computers.  
 
 At the moment, PDDuino can:
@@ -19,14 +19,11 @@ This fork adds:
 * support for Teensy 3.5/3.6 special card reader hardware
 * support for Adafruit Feather 32u4 Adalogger
 * support for Adafruit Feather M0 Adalogger
-* the current working directory is displayed in TS-DOS
-* TPDD2-style bootstrap
+* the current working directory is displayed in the top-right corner of the TS-DOS display
+* TPDD2-style bootstrapper
 
 ## Requirements
 ### Hardware
-#### See [MonT](https://github.com/bkw777/MonT) (MCU on Model T)  
-A MonT adapter takes the place of the serial cable and ttl/rs232 tranceiver described below.
-
 * Arduino Mega or compatible with at least one hardware serial port
 * SD card reader  
 * RS232 level shifter for the serial port going to the TPDD client (to the M100)
@@ -58,8 +55,15 @@ Optional: [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 
 ## Assembly
 ### Hardware
-(If not using a MonT board)
 
+#### New hardware using custom adapter board - STILL IN TESTING
+![](PCB/PDDuino_Feather_1.jpg)  
+![](PCB/PDDuino_Feather_2.jpg)  
+See the [PCB](PCB) directory.  
+Currently there is a board for Adafruit Feather boards.  
+The same adapter works with either the Feather 32u4 Adalogger  or  Feather M0 Adalogger  
+
+#### Original hardware using a serial cable
 See http://tandy.wiki/TPDD_Cable  
 * SD Card reader (if not using a board with built-in card reader):  
  Attach the SPI SD card reader to the microcontroller using its SPI bus.  
@@ -68,24 +72,39 @@ See http://tandy.wiki/TPDD_Cable
 * Serial port:  
  Attach an RS232 level shifter to the TX/RX pins of a hardware serial port.
  Power the RS232 level shifter from the microcontroller's power rail, not for example from a separate 5v source, to ensure the rx/tx signal levels coming from the level shifter will safely match the microcontroller.  
-TS-DOS requires DTR/DSR. You can do a couple different options:
-Option 1:
-  Bridge the DTR and DSR pins on the RS232 connector on the Model-100 end.
-  Tie gpio pin 6 to ground with a 10-30k pulldown resistor.
-  Optionally, also add a momentary pushbutton and a 150ohm resistor to override the pulldown resistor and pull pin 6 high manually.
-  The pushbutton provides a way to manually invoke the bootstrapper, which otherwise would never happen with this option.
-Option 2:
-  Connect DTR on the M100 through a MAX3232 to GPIO pin 6 on the arduino.
-  Connect a 10-30k pull-down resitor from pin 6 to ground.
-  Connect GPIO pin 5 on the arduino though a MAX-3232, to DSR on the Model 100.
-  See the schematic for MonT Feather https://github.com/bkw777/MonT for reference.
+ Bridge the DTR and DSR pins on the RS232 connector (Required for TS-DOS).
+ 
+#### TPDD2-style bootstrap
+Hardware hookup:
+Add a 10-20k pulldown resistor from GPIO pin 6 to ground.
+Also connect pin 6 to either a pushbutton or DTR from the M100:
+Manual button option:
+  pin 6 --> momentary pushbutton --> 100ohm resistor --> 3.3v
+DTR from M100 option:
+  pin 6 --> MAX3232 R2OUT
+  MAX3232 R2IN --> M100 DTR
+
+The new PCB doesn't include the wiring for this yet.
+
+Usage:
+Place an ascii BASIC file named LOADER.DO on the root of the SD card.
+Example, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100) from [dlplus](https://github.com/bkw777/dlplus),
+and save it as LOADER.DO on the root of the SD card.
+Start with the arduin powered-off.
+Either don't turn the arduino on yet, or, don't insert the sd card yet.
+In BASIC do the standard RUN "COM:98N1ENN" and press enter.
+If you're using the pushbutton, press and hold the button now.
+Now either power-on the arduino wuth the sd-card already inserted, or insert the sd-card now if the arduio is already powered on.
+As soon as the LED comes on you can release the button.
+Follow the [post-install directions for TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100.post-install.txt) from dlplus.
+
 
 ### Software
 * Load the source file into the Arduino IDE
 * Download the SPI and SdFat libraries from the library manager
 * Make any changes if needed
   There are many configuration options in the form of #defines at the top of the file.  
-  The main one you need to set is BOARD to select what type of board to build for. Many other things automatically derive from that, for the few built-in supported boards like teensy and adalogger.
+  The main one you need to set is PLATFORM to select what type of board to build for. Many other things automatically derive from that, for the few built-in supported boards liek teensy and adalogger.
 * Compile the code and upload it to the microcontroller
   You will need to consult your board's documentation to set up the Arduino IDE correctly to to program the board.  
   This usually means installing one or more board support libraries, and selecting the board type from the tools menu.  
@@ -95,30 +114,6 @@ Option 2:
 <!-- ![](https://github.com/bkw777/BCR_USB_PWR/blob/master/BCR_USB_PWR.png)  -->
 You can power the Arduino from the computer with this [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout)  
  and a usb cable.
- 
-## Usage
-### TPDD2-style bootstrap
-PDDuino looks at the state of GPIO pin 6 at power-on (actually, right after the SD card is successfully initialized, so you can delay this check by powering-on with no SD card inserted, and then the check will happen right after you insert a card).  
-If GPIO pin 6 is high when the SD card is first initialized, then PDDuino sends reads LOADER.DO and sends it over the serial line into BASIC.  
-You need to use DSR/DTR Option 2 above, or you need to have the pushbutton with Option 1.
-
-* Take an ascii format BASIC file, name it LOADER.DO, and place it in the root of the SD card.  
-For example, any of the BASIC files in the "clients" dir from [dlplus](http://github.com/bkw777/dlplus).  
-IE, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100) ,
-Save it as LOADER.DO in the root of the SD card.
-
-* Either power-off the arduino and insert the sd-card and leave the power off, or power-cycle the arduino now with no sd-card inserted, and leave the card ejected.
-
-* Start BASIC on the Model 100 adn enter RUN "COM:98N1ENN" [Enter] just like the bootstrap directions for the TPDD2 or dlplus or mComm.
-
-* If you did wiring option 1, press & hold the pushbutton.
-
-* Power-on the arduino, or, insert the sd-card if it's already powered on.
-
-* Once the LED comes on you can release the pushbutton.
-
-* Follow any on-screen directions, and follow the post-install.txt file from dlplus for the loader you're using.  
-IE: https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100.post-install.txt for TEENY.100
 
 ## Notes
 If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from here: http://www.club100.org/nads/dos100.co
@@ -159,10 +154,6 @@ Goes away if you try to open PARENT.<> when you're already in root.
 
 
 ## Change-log
-### 20200819 b.kenyon.w@gmail.com
-* Moved PCB to it's own repo
-* Added TPDD2-style bootstrapper
-
 ### 20200817 b.kenyon.w@gmail.com
 * Added PCB adapter "PDDuino_Feather".  
  Takes the place of the serial cable and ttl-rs232 module.  
