@@ -1,12 +1,12 @@
 # PDDuino
 A hardware emulator of the Tandy Portable Disk Drive using an SD card for mass storage
 
-[![Video of SD2TPDD running on a Teeensy 3.5](http://img.youtube.com/vi/_lFqsHAlLyg/hqdefault.jpg)](https://youtu.be/_lFqsHAlLyg "SD2TPDD on a Teensy 3.5")
+[![Video of PDDuino running on a Teeensy 3.5](http://img.youtube.com/vi/_lFqsHAlLyg/hqdefault.jpg)](https://youtu.be/_lFqsHAlLyg "SD2TPDD on a Teensy 3.5")
 
-[![Video of SD2TPDD running on a Adafruit Feather 32u4 Adalogger](http://img.youtube.com/vi/kQyY_Z1aGy8/hqdefault.jpg)](https://youtu.be/kQyY_Z1aGy8 "SD2TPDD on Adafruit Feather 32u4 Adalogger")
+[![Video of PDDuino running on a Adafruit Feather 32u4 Adalogger](http://img.youtube.com/vi/kQyY_Z1aGy8/hqdefault.jpg)](https://youtu.be/kQyY_Z1aGy8 "SD2TPDD on Adafruit Feather 32u4 Adalogger")
 
 ## Verbose Description
-PDDuino is forked from SD2TPDD, and is largely still the same as SD2TPDD.  
+PDDuino is forked from SD2TPDD.  
 This project aims to provide an easy-to-use, cheap, and reliable mass storage solution for the TRS-80 Model 100 series of computers.  
 
 At the moment, PDDuino can:
@@ -14,12 +14,12 @@ At the moment, PDDuino can:
 * Provide DME directory access
 
 This fork adds:
-* power saving sleep mode calls
-* disk-activity led
-* support for Teensy 3.5/3.6 special card reader hardware
-* support for Adafruit Feather 32u4 Adalogger
-* support for Adafruit Feather M0 Adalogger
-* the current working directory is displayed in the top-right corner of the TS-DOS display
+* Power saving sleep mode calls
+* Disk-activity led
+* Support for Teensy 3.5/3.6 special card reader hardware
+* Support for Adafruit Feather 32u4 Adalogger
+* Support for Adafruit Feather M0 Adalogger
+* Current working directory is displayed in TS-DOS
 * TPDD2-style bootstrapper
 
 ## Requirements
@@ -57,11 +57,7 @@ Optional: [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 ### Hardware
 
 #### New hardware using custom adapter board - STILL IN TESTING
-![](PCB/PDDuino_Feather_1.jpg)  
-![](PCB/PDDuino_Feather_2.jpg)  
-See the [PCB](PCB) directory.  
-Currently there is a board for Adafruit Feather boards.  
-The same adapter works with either the Feather 32u4 Adalogger  or  Feather M0 Adalogger  
+See [MonT](https://github.com/bkw777/MonT)  
 
 #### Original hardware using a serial cable
 See http://tandy.wiki/TPDD_Cable  
@@ -72,31 +68,28 @@ See http://tandy.wiki/TPDD_Cable
 * Serial port:  
  Attach an RS232 level shifter to the TX/RX pins of a hardware serial port.
  Power the RS232 level shifter from the microcontroller's power rail, not for example from a separate 5v source, to ensure the rx/tx signal levels coming from the level shifter will safely match the microcontroller.  
- Bridge the DTR and DSR pins on the RS232 connector (Required for TS-DOS).
- 
-#### TPDD2-style bootstrap
-Hardware hookup:
-Add a 10-20k pulldown resistor from GPIO pin 6 to ground.
-Also connect pin 6 to either a pushbutton or DTR from the M100:
-Manual button option:
-  pin 6 --> momentary pushbutton --> 100ohm resistor --> 3.3v
-DTR from M100 option:
-  pin 6 --> MAX3232 R2OUT
-  MAX3232 R2IN --> M100 DTR
 
-The new PCB doesn't include the wiring for this yet.
+ DSR/DTR. You have a couple of options:
+ Otion 1:
+   10-30k pulldown resistor from GPIO pin 6 to GND:
+   GPIO pin 6 --> 15k -- GND
 
-Usage:
-Place an ascii BASIC file named LOADER.DO on the root of the SD card.
-Example, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100) from [dlplus](https://github.com/bkw777/dlplus),
-and save it as LOADER.DO on the root of the SD card.
-Start with the arduin powered-off.
-Either don't turn the arduino on yet, or, don't insert the sd card yet.
-In BASIC do the standard RUN "COM:98N1ENN" and press enter.
-If you're using the pushbutton, press and hold the button now.
-Now either power-on the arduino wuth the sd-card already inserted, or insert the sd-card now if the arduio is already powered on.
-As soon as the LED comes on you can release the button.
-Follow the [post-install directions for TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100.post-install.txt) from dlplus.
+   Bridge the DTR and DSR pins on the RS232 connector.
+
+   Optionally install a momentary pushbutton to manually bring pin 6 high:
+   GPIO pin 6 --> button --> 330ohm --> 3v3
+
+ Option 2:
+   10-30k pulldown resistor from GPIO pin 6 to GND:
+   GPIO pin 6 --> 15k -- GND
+
+   Connect DTR from M100 through MAX3232 to arduino gpio pin 6:
+   GPIO pin 6 --- MAX3232 R2OUT
+   MAX3232 R2IN --- M100 DTR (DB25 pin 20)
+
+   Connect GPIO pin 5 through MAX3232 to M100 DSR pin:
+   GPIO pin 5 --- MAX3232 T2IN
+   MAX3232 T2OUT --- M100 DSR (DB25 pin 6)
 
 
 ### Software
@@ -114,6 +107,24 @@ Follow the [post-install directions for TEENY.100](https://raw.githubusercontent
 <!-- ![](https://github.com/bkw777/BCR_USB_PWR/blob/master/BCR_USB_PWR.png)  -->
 You can power the Arduino from the computer with this [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout)  
  and a usb cable.
+
+## Usage:
+### Bootstrap
+Place an ascii format BASIC file named LOADER.DO on the root of the SD card.
+Example, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100) from [dlplus](https://github.com/bkw777/dlplus),
+and save it as LOADER.DO on the root of the SD card.
+
+Power-off the arduino and insert the sdcard.
+
+In BASIC do RUN "COM:98N1ENN" and press enter.
+
+If you're using DSR/DTR option 1 above with the pushbutton, press and hold the button now.
+
+Power-on the arduino.
+
+As soon as the LED comes on steady you can release the button.
+
+Follow the [post-install directions for TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100.post-install.txt) from dlplus.
 
 ## Notes
 If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from here: http://www.club100.org/nads/dos100.co
@@ -154,6 +165,10 @@ Goes away if you try to open PARENT.<> when you're already in root.
 
 
 ## Change-log
+### 20200819 b.kenyon.w@gmail.com
+* moved PCB to its own repo
+* added TPDD2-style bootstrap function
+
 ### 20200817 b.kenyon.w@gmail.com
 * Added PCB adapter "PDDuino_Feather".  
  Takes the place of the serial cable and ttl-rs232 module.  
