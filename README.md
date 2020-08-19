@@ -23,6 +23,9 @@ This fork adds:
 
 ## Requirements
 ### Hardware
+#### See [MonT](https://github.com/bkw777/MonT) (MCU on Model T)  
+A MonT adapter takes the place of the serial cable and ttl/rs232 tranceiver described below.
+
 * Arduino Mega or compatible with at least one hardware serial port
 * SD card reader  
 * RS232 level shifter for the serial port going to the TPDD client (to the M100)
@@ -54,15 +57,8 @@ Optional: [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 
 ## Assembly
 ### Hardware
+(If not using a MonT board)
 
-#### New hardware using custom adapter board - STILL IN TESTING
-![](PCB/PDDuino_Feather_1.jpg)  
-![](PCB/PDDuino_Feather_2.jpg)  
-See the PCB directory.  
-Currently there is a board for Adafruit Feather boards.  
-The same adapter works with either the Feather 32u4 Adalogger  or  Feather M0 Adalogger  
-
-#### Original hardware using a serial cable
 See http://tandy.wiki/TPDD_Cable  
 * SD Card reader (if not using a board with built-in card reader):  
  Attach the SPI SD card reader to the microcontroller using its SPI bus.  
@@ -127,6 +123,9 @@ Goes away if you try to open PARENT.<> when you're already in root.
 
 
 ## Change-log
+### 20200819 b.kenyon.w@gmail.com
+* Moved PCB to it's own repo
+* Added TPDD2-style bootstrapper
 ### 20200817 b.kenyon.w@gmail.com
 * Added PCB adapter "PDDuino_Feather".  
  Takes the place of the serial cable and ttl-rs232 module.  
