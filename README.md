@@ -72,16 +72,16 @@ See http://tandy.wiki/TPDD_Cable
  DSR/DTR. You have a couple of options:  
  Otion 1:  
    10-30k pulldown resistor from GPIO pin 6 to GND:  
-   GPIO pin 6 --> 15k -- GND  
+   GPIO pin 6 --- 15k --- GND  
 
    Bridge the DTR and DSR pins on the RS232 connector.
 
    Optionally install a momentary pushbutton to manually bring pin 6 high:  
-   GPIO pin 6 --> button --> 330ohm --> 3v3
+   GPIO pin 6 --- button --- 330ohm --- 3v3
 
  Option 2:  
    10-30k pulldown resistor from GPIO pin 6 to GND:  
-   GPIO pin 6 --> 15k -- GND
+   GPIO pin 6 --- 15k --- GND
 
    Connect DTR from M100 through MAX3232 to arduino gpio pin 6:  
    GPIO pin 6 --- MAX3232 R2OUT  
