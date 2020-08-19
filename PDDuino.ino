@@ -120,16 +120,6 @@
 
 // Adafruit Feather 32u4 Adalogger
 // https://learn.adafruit.com/adafruit-feather-32u4-adalogger
-// GPIO #4 - used as the MicroSD card CS (chip select) pin
-// GPIO #7 - used as the MicroSD card CD (card detect) pin.
-//           If you want to detect when a card is inserted/removed, configure this pin as an input with a pullup.
-//           When the pin reads low (0V) then there is no card inserted. When the pin reads high, then a card is in place.
-//           It will not tell you if the card is valid, its just a mechanical switch.
-// GPIO #8 - Green LED next to the SD card.
-//
-// TODO:
-// Write DTR on GPIO #5
-// Read DSR on GPIO #6
 //
 #elif BOARD == Adalogger_32u4
   #define CONSOLE Serial
@@ -155,16 +145,6 @@
 
 // Adafruit Feather M0 Adalogger
 // https://learn.adafruit.com/adafruit-feather-m0-adalogger
-// GPIO #4 - used as the MicroSD card CS (chip select) pin
-// GPIO #7 - used as the MicroSD card CD (card detect) pin.
-//           If you want to detect when a card is inserted/removed, configure this pin as an input with a pullup.
-//           When the pin reads low (0V) then there is no card inserted. When the pin reads high, then a card is in place.
-//           It will not tell you if the card is valid, its just a mechanical switch.
-// GPIO #8 - Green LED next to the SD card.
-//
-// TODO:
-// Write DTR on GPIO #5
-// Read DSR on GPIO #6
 //
 #elif BOARD == Adalogger_M0
   #define CONSOLE Serial
