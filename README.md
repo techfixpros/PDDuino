@@ -69,26 +69,26 @@ See http://tandy.wiki/TPDD_Cable
  Attach an RS232 level shifter to the TX/RX pins of a hardware serial port.
  Power the RS232 level shifter from the microcontroller's power rail, not for example from a separate 5v source, to ensure the rx/tx signal levels coming from the level shifter will safely match the microcontroller.  
 
- DSR/DTR. You have a couple of options:
- Otion 1:
-   10-30k pulldown resistor from GPIO pin 6 to GND:
-   GPIO pin 6 --> 15k -- GND
+ DSR/DTR. You have a couple of options:  
+ Otion 1:  
+   10-30k pulldown resistor from GPIO pin 6 to GND:  
+   GPIO pin 6 --> 15k -- GND  
 
    Bridge the DTR and DSR pins on the RS232 connector.
 
-   Optionally install a momentary pushbutton to manually bring pin 6 high:
+   Optionally install a momentary pushbutton to manually bring pin 6 high:  
    GPIO pin 6 --> button --> 330ohm --> 3v3
 
- Option 2:
-   10-30k pulldown resistor from GPIO pin 6 to GND:
+ Option 2:  
+   10-30k pulldown resistor from GPIO pin 6 to GND:  
    GPIO pin 6 --> 15k -- GND
 
-   Connect DTR from M100 through MAX3232 to arduino gpio pin 6:
-   GPIO pin 6 --- MAX3232 R2OUT
-   MAX3232 R2IN --- M100 DTR (DB25 pin 20)
+   Connect DTR from M100 through MAX3232 to arduino gpio pin 6:  
+   GPIO pin 6 --- MAX3232 R2OUT  
+   MAX3232 R2IN --- M100 DTR (DB25 pin 20)  
 
-   Connect GPIO pin 5 through MAX3232 to M100 DSR pin:
-   GPIO pin 5 --- MAX3232 T2IN
+   Connect GPIO pin 5 through MAX3232 to M100 DSR pin:  
+   GPIO pin 5 --- MAX3232 T2IN  
    MAX3232 T2OUT --- M100 DSR (DB25 pin 6)
 
 
@@ -104,14 +104,13 @@ See http://tandy.wiki/TPDD_Cable
   In the case of Teensy, you also should install "Teensyduino", and there are more options on the tools menu such as setting the cpu clock speed. You can underclock the teensy to save even more battery.
 
 ## Power from BCR port  
-<!-- ![](https://github.com/bkw777/BCR_USB_PWR/blob/master/BCR_USB_PWR.png)  -->
 You can power the Arduino from the computer with this [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout)  
  and a usb cable.
 
 ## Usage:
 ### Bootstrap
-Place an ascii format BASIC file named LOADER.DO on the root of the SD card.
-Example, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100) from [dlplus](https://github.com/bkw777/dlplus),
+Place an ascii format BASIC file named LOADER.DO on the root of the SD card.  
+Example, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100) from [dlplus](https://github.com/bkw777/dlplus),  
 and save it as LOADER.DO on the root of the SD card.
 
 Power-off the arduino and insert the sdcard.
