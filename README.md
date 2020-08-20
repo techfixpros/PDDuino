@@ -5,6 +5,8 @@ A hardware emulator of the Tandy Portable Disk Drive using an SD card for mass s
 
 [![Video of PDDuino running on a Adafruit Feather 32u4 Adalogger](http://img.youtube.com/vi/kQyY_Z1aGy8/hqdefault.jpg)](https://youtu.be/kQyY_Z1aGy8 "SD2TPDD on Adafruit Feather 32u4 Adalogger")
 
+[![Video of PDDuino doing TPDD2-style bootstrap installing TEENY](https://img.youtube.com/vi/3ZgceFy4YZs/default.jpg)](https://youtu.be/3ZgceFy4YZs TPDD2-style bootstrap")
+
 ## Verbose Description
 PDDuino is forked from SD2TPDD.  
 This project aims to provide an easy-to-use, cheap, and reliable mass storage solution for the TRS-80 Model 100 series of computers.  
