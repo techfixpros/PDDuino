@@ -929,7 +929,7 @@ void setup() {
 
   // DSR/DTR
   pinMode(DTR_PIN, OUTPUT);
-  digitalWrite(DTR_PIN,LOW);  // tell client we're not ready
+  digitalWrite(DTR_PIN,HIGH);  // tell client we're not ready
   pinMode(DSR_PIN, INPUT);
 
 // if debug console enabled, blink led and wait for console to be attached before proceeding
@@ -976,12 +976,12 @@ DEBUG_PRINTL(F("Using SDIO"));
 
   initCard();
 
-  digitalWrite(DTR_PIN,HIGH); // tell client we're ready
+  digitalWrite(DTR_PIN,LOW); // tell client we're ready
 
   // Possible TPDD2-style automatic bootstrap.
   // If client is waiting already at power-on,
   // then send LOADER.BA before going into main loop()
-  if(digitalRead(DSR_PIN)) sendLoader();
+  if(!digitalRead(DSR_PIN)) sendLoader();
 
 }
 
