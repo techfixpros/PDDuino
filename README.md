@@ -36,12 +36,16 @@ Arduino-compatible boards with sd card reader already built-in:
   [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)  
   [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)  
   (not yet tested/ported, way overkill)[Teensy 4.1](https://www.pjrc.com/store/teensy41.html)  
-  (not yet tried, TODO)[OpenLog](https://www.ebay.com/sch/i.html?_nkw=OpenLog)  
 
+Adapter board that provides the serial connection:  
+  [MounT](https://github.com/bkw777/MounT)  
+
+(Not needed with MounT adapter)
 RS-232<-->TTL level-shifter module:  
   [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/)  
   (Has DTE pinout. Use the same null-modem cable as for a PC bwith no other adapters needed.)
 
+(Not needed with MounT adapter)
 RS-232 cable:  
   With the specific level-shifter module above, with male pins and DTE pinout: [PCCables 0103](https://www.pccables.com/products/00103.html)  
   Or [Any of these](http://tandy.wiki/Model_100_102_200_600_Serial_Cable)
@@ -76,18 +80,19 @@ You can power the Arduino from the computer with this [BCR-USB-Power adapter](ht
 
 ## Usage:
 ### Bootstrap
+Power-off the Arduino and remove the SD card.
+
 Place an ascii format BASIC file named LOADER.DO on the root of the SD card.  
 You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).  
-Example, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100) from [dlplus](https://github.com/bkw777/dlplus),  
-and save it as LOADER.DO on the root of the SD card.
+Example, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100), and save it as LOADER.DO on the root of the SD card.
 
-Power-cycle the Arduino while the SD card is still out. The Arduino should now have a steady slow blinking LED, indication it's waiting for an SD card. Don't insert the SD card yet.
+Power-on the Arduino while the SD card is still out. The Arduino should now have a steady slow blinking LED, indication it's waiting for an SD card. Don't insert the SD card yet.
 
 In BASIC do '''RUN "COM:98N1ENN"''' and press enter.
 
 Insert the SD card.
 
-Follow the [post-install directions for TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100.post-install.txt) from dlplus.
+Follow the [post-install directions for TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100.post-install.txt).
 
 ## Notes
 If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from here: http://www.club100.org/nads/dos100.co
@@ -96,8 +101,8 @@ If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by l
 * Document the various Arduino IDE setup and config quirks needed for each board.
 
 ## other To-Dos, or merely ideas
-* RTC  (Teensy has built-in rtc)
-* play & record audio as virtual cassette  (Teensy has built-in audio, and enough cpu & ram to use it)
+* RTC (Teensy has built-in rtc)
+* play & record audio as virtual cassette (Teensy has built-in audio, and enough cpu & ram to use it)
 * Battery level (Adalogger has built-in voltage reference and adc, and a built-in lipo charger)
 * A command-line that can be accessed from the computer's terminal emulator for quicker file manipulation
 * Hayes modem emulation using an ESP8266 (<https://www.cbmstuff.com/proddetail.php?prod=WiModem232>)
@@ -106,7 +111,8 @@ If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by l
 ## BUGS/STATUS
 * Works with TS-DOS.
 
-* File transfers don't work with TpddTool.py This seems to be due to mis-matches in handling the space-padding in the filenames?
+* File transfers don't work with TpddTool.py .<br>
+ This seems to be due to mis-matches in handling the space-padding in the filenames?
 
 * TEENY hangs.
 
@@ -129,8 +135,8 @@ Goes away if you try to open PARENT.<> when you're already in root.
 
 ## Change-log
 ### 20200819 b.kenyon.w@gmail.com
-* moved PCB to its own repo
-* added TPDD2-style bootstrap function
+* Moved PCB to its own repo
+* Added TPDD2-style bootstrap function
 
 ### 20200817 b.kenyon.w@gmail.com
 * Added PCB adapter "PDDuino_Feather".  
