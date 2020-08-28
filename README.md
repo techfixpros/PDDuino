@@ -1,5 +1,5 @@
 # PDDuino
-A hardware emulator of the Tandy Portable Disk Drive using an SD card for mass storage
+A Tandy Portable Disk Drive emultaor implemented on Arduino, using a micro-sd card for storage.
 
 [![Video of PDDuino running on a Teeensy 3.5](http://img.youtube.com/vi/_lFqsHAlLyg/hqdefault.jpg)](https://youtu.be/_lFqsHAlLyg "SD2TPDD on a Teensy 3.5")
 
@@ -57,49 +57,14 @@ Optional: [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 
 ## Assembly
 ### Hardware
-
-#### New hardware using custom adapter board - STILL IN TESTING
-See [MonT](https://github.com/bkw777/MonT)  
-
-#### Original hardware using a serial cable
-See http://tandy.wiki/TPDD_Cable  
-* SD Card reader (if not using a board with built-in card reader):  
- Attach the SPI SD card reader to the microcontroller using its SPI bus.  
- Connect the SD card reader's chip select pin to the pin specified by the SD_CS_PIN variable (default is pin 4).  
- Attach the SPI SD card reader to the microcontroller's power rail.
-* Serial port:  
- Attach an RS232 level shifter to the TX/RX pins of a hardware serial port.
- Power the RS232 level shifter from the microcontroller's power rail, not for example from a separate 5v source, to ensure the rx/tx signal levels coming from the level shifter will safely match the microcontroller.  
-
- DSR/DTR. You have a couple of options:  
- Otion 1:  
-   10-30k pulldown resistor from GPIO pin 6 to GND:  
-   GPIO pin 6 --- 15k --- GND  
-
-   Bridge the DTR and DSR pins on the RS232 connector.
-
-   Optionally install a momentary pushbutton to manually bring pin 6 high:  
-   GPIO pin 6 --- button --- 330ohm --- 3v3
-
- Option 2:  
-   10-30k pulldown resistor from GPIO pin 6 to GND:  
-   GPIO pin 6 --- 15k --- GND
-
-   Connect DTR from M100 through MAX3232 to arduino gpio pin 6:  
-   GPIO pin 6 --- MAX3232 R2OUT  
-   MAX3232 R2IN --- M100 DTR (DB25 pin 20)  
-
-   Connect GPIO pin 5 through MAX3232 to M100 DSR pin:  
-   GPIO pin 5 --- MAX3232 T2IN  
-   MAX3232 T2OUT --- M100 DSR (DB25 pin 6)
-
+See [MounT](https://github.com/bkw777/MounT)  
 
 ### Software
 * Load the source file into the Arduino IDE
 * Download the SPI and SdFat libraries from the library manager
-* Make any changes if needed
+* Change any #DEFINE options needed at the top.
   There are many configuration options in the form of #defines at the top of the file.  
-  The main one you need to set is PLATFORM to select what type of board to build for. Many other things automatically derive from that, for the few built-in supported boards liek teensy and adalogger.
+  The main one you need to set is PLATFORM, to select what type of board to build for. Several other settings automatically derive from that.
 * Compile the code and upload it to the microcontroller
   You will need to consult your board's documentation to set up the Arduino IDE correctly to to program the board.  
   This usually means installing one or more board support libraries, and selecting the board type from the tools menu.  
@@ -112,18 +77,15 @@ You can power the Arduino from the computer with this [BCR-USB-Power adapter](ht
 ## Usage:
 ### Bootstrap
 Place an ascii format BASIC file named LOADER.DO on the root of the SD card.  
+You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).  
 Example, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100) from [dlplus](https://github.com/bkw777/dlplus),  
 and save it as LOADER.DO on the root of the SD card.
 
-Power-off the arduino and insert the sdcard.
+Power-cycle the Arduino while the SD card is still out. The Arduino should now have a steady slow blinking LED, indication it's waiting for an SD card. Don't insert the SD card yet.
 
-In BASIC do RUN "COM:98N1ENN" and press enter.
+In BASIC do '''RUN "COM:98N1ENN"''' and press enter.
 
-If you're using DSR/DTR option 1 above with the pushbutton, press and hold the button now.
-
-Power-on the arduino.
-
-As soon as the LED comes on steady you can release the button.
+Insert the SD card.
 
 Follow the [post-install directions for TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100.post-install.txt) from dlplus.
 
@@ -132,21 +94,21 @@ If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by l
 
 ## To-Do
 * Document the various Arduino IDE setup and config quirks needed for each board.
-* Teeny and/or TS-DOS installer
 
 ## other To-Dos, or merely ideas
 * RTC  (Teensy has built-in rtc)
 * play & record audio as virtual cassette  (Teensy has built-in audio, and enough cpu & ram to use it)
 * Battery level (Adalogger has built-in voltage reference and adc, and a built-in lipo charger)
-* A protocol expansion allowing access to files greater than 64KB in size
-* Full NADSBox compatibility
 * A command-line that can be accessed from the computer's terminal emulator for quicker file manipulation
 * Hayes modem emulation using an ESP8266 (<https://www.cbmstuff.com/proddetail.php?prod=WiModem232>)
 * FTP server/client access using an ESP8266
 
-## BUGS
-* Works with real TS-DOS, but file transfers don't actually work with TpddTool.py  
-This seems to be due to mis-matches in handling the space-padding in the filenames?
+## BUGS/STATUS
+* Works with TS-DOS.
+
+* File transfers don't work with TpddTool.py This seems to be due to mis-matches in handling the space-padding in the filenames?
+
+* TEENY hangs.
 
 * Some kind of working directory initial/default state issue, which affects Ultimate Rom II loading DOS100.CO on the fly.
 If you have DOS100.CO in ram, then UR-2 works all the time, because it will use that copy if available.  
