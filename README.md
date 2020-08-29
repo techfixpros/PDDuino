@@ -89,13 +89,15 @@ Power-off the Arduino and remove the SD card.
 
 Place an ascii format BASIC file named LOADER.DO on the root of the SD card.  
 You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).  
-Even better, download mComm181.apk from here: [Kurt McCullum on Club100.org](http://www.club100.org/memfiles/index.php?&direction=0&order=&directory=Kurt%20McCullum/mComm%20Android)
-Unzip it, and get the files '''dos100.do''', '''dos200.do''', and '''dosnec.do''' from the assets directory.
-Example, take '''dos100.do''', and save it as LOADER.DO on the root of the SD card.
+Even better, download mComm181.apk from here: [Kurt McCullum on Club100.org](http://www.club100.org/memfiles/index.php?&direction=0&order=&directory=Kurt%20McCullum/mComm%20Android)  
+Unzip it, and get the files ```dos100.do```, ```dos200.do```, and ```dosnec.do``` from the assets directory.  
+Example, take ```dos100.do```, and save it as LOADER.DO on the root of the SD card.
 
-Power-on the Arduino while the SD card is still out. The Arduino should now have a steady slow blinking LED, indication it's waiting for an SD card. Don't insert the SD card yet.
+Power-on the Arduino while the SD card is still out.  
+The Arduino should now have a steady slow blinking LED, indication it's waiting for an SD card.  
+Don't insert the SD card yet.
 
-In BASIC do '''RUN "COM:98N1ENN"''' and press enter.
+In BASIC do ```RUN "COM:98N1ENN"``` and press enter.
 
 Insert the SD card.
 
