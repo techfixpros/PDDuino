@@ -43,7 +43,7 @@ Arduino-compatible boards with sd card reader already built-in:
   (not yet tested/ported, way overkill)[Teensy 4.1](https://www.pjrc.com/store/teensy41.html)  
 
 Adapter board that provides the serial connection:  
-  [MounT](https://github.com/bkw777/MounT)  
+  [MounT](https://github.com/bkw777/MounT)
 
 <!--
 (Not needed with MounT adapter)
@@ -57,8 +57,8 @@ RS-232 cable:
   Or [Any of these](http://tandy.wiki/Model_100_102_200_600_Serial_Cable)
 -->
 
-adapter board that provides power:
-  [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
+Adapter board that provides power:  
+  [BCR-USB-Power adapter](http://www.github.com/bkw777/BCR_Breakout/) (the USB-Power adapter not the generic breakout adapter)
 
 ### Software
 * Arduino IDE
