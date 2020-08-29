@@ -47,7 +47,7 @@ Adapter board that provides the serial connection:
 
 <!--
 (Not needed with MounT adapter)
-RS-232<-->TTL level-shifter module:  
+RS-232&lt;--&gt;TTL level-shifter module:  
   [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/)  
   (Has DTE pinout. Use the same null-modem cable as for a PC bwith no other adapters needed.)
 
