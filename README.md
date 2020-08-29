@@ -1,11 +1,16 @@
 # PDDuino
 A Tandy Portable Disk Drive emultaor implemented on Arduino, using a micro-sd card for storage.
 
+[![Video of PDDuino doing TPDD2-style bootstrap installing TS-DOS](https://img.youtube.com/vi/3PorYduc5lk/hqdefault.jpg)](https://youtu.be/3PorYduc5lk "PDDuino + Feather MounT + BCR_Breakout")
+
+<!--
+Earlier stages:<br>
 [![Video of PDDuino running on a Teeensy 3.5](http://img.youtube.com/vi/_lFqsHAlLyg/hqdefault.jpg)](https://youtu.be/_lFqsHAlLyg "SD2TPDD on a Teensy 3.5")
 
 [![Video of PDDuino running on a Adafruit Feather 32u4 Adalogger](http://img.youtube.com/vi/kQyY_Z1aGy8/hqdefault.jpg)](https://youtu.be/kQyY_Z1aGy8 "SD2TPDD on Adafruit Feather 32u4 Adalogger")
 
 [![Video of PDDuino doing TPDD2-style bootstrap installing TEENY](https://img.youtube.com/vi/3ZgceFy4YZs/hqdefault.jpg)](https://youtu.be/3ZgceFy4YZs "TPDD2-style bootstrap")
+-->
 
 ## Verbose Description
 PDDuino is forked from SD2TPDD.  
@@ -40,6 +45,7 @@ Arduino-compatible boards with sd card reader already built-in:
 Adapter board that provides the serial connection:  
   [MounT](https://github.com/bkw777/MounT)  
 
+<!--
 (Not needed with MounT adapter)
 RS-232<-->TTL level-shifter module:  
   [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/)  
@@ -49,8 +55,10 @@ RS-232<-->TTL level-shifter module:
 RS-232 cable:  
   With the specific level-shifter module above, with male pins and DTE pinout: [PCCables 0103](https://www.pccables.com/products/00103.html)  
   Or [Any of these](http://tandy.wiki/Model_100_102_200_600_Serial_Cable)
+-->
 
-Optional: [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
+adapter board that provides power:
+  [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 
 ### Software
 * Arduino IDE
@@ -61,7 +69,8 @@ Optional: [BCR-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 
 ## Assembly
 ### Hardware
-See [MounT](https://github.com/bkw777/MounT)  
+* [MounT](https://github.com/bkw777/MounT)<br>
+* [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout) (the USB adapter not the generic breakout adapter)
 
 ### Software
 * Load the source file into the Arduino IDE
@@ -74,17 +83,15 @@ See [MounT](https://github.com/bkw777/MounT)
   This usually means installing one or more board support libraries, and selecting the board type from the tools menu.  
   In the case of Teensy, you also should install "Teensyduino", and there are more options on the tools menu such as setting the cpu clock speed. You can underclock the teensy to save even more battery.
 
-## Power from BCR port  
-You can power the Arduino from the computer with this [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout)  
- and a usb cable.
-
 ## Usage:
 ### Bootstrap
 Power-off the Arduino and remove the SD card.
 
 Place an ascii format BASIC file named LOADER.DO on the root of the SD card.  
 You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).  
-Example, take [TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100), and save it as LOADER.DO on the root of the SD card.
+Even better, download mComm181.apk from here: [Kurt McCullum on Club100.org](http://www.club100.org/memfiles/index.php?&direction=0&order=&directory=Kurt%20McCullum/mComm%20Android)
+Unzip it, and get the files '''dos100.do''', '''dos200.do''', and '''dosnec.do''' from the assets directory.
+Example, take '''dos100.do''', and save it as LOADER.DO on the root of the SD card.
 
 Power-on the Arduino while the SD card is still out. The Arduino should now have a steady slow blinking LED, indication it's waiting for an SD card. Don't insert the SD card yet.
 
@@ -92,10 +99,12 @@ In BASIC do '''RUN "COM:98N1ENN"''' and press enter.
 
 Insert the SD card.
 
-Follow the [post-install directions for TEENY.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/teeny/TEENY.100.post-install.txt).
+Wait, and follow the on-screen directions.
+
+You now have the ram version of TS-DOS installed! You can immediately use it to browse the contents of the SD card.
 
 ## Notes
-If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from here: http://www.club100.org/nads/dos100.co
+If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from <http://www.club100.org/nads/dos100.co>.
 
 ## To-Do
 * Document the various Arduino IDE setup and config quirks needed for each board.
@@ -129,8 +138,8 @@ UR-2 works fine with a real TPDD/TPDD2 and other emulators like dlplus and Laddi
 
 * When UR-2 loads DOS100.CO, sucessfully or not, the LED doesn't shut off after.
 
-* Displays the "PARENT.<>" directory entry even when you are already in the root dir.  
-Goes away if you try to open PARENT.<> when you're already in root.
+* Sometimes displays the "PARENT.<>" directory entry even when you are already in the root dir.  
+Goes away if you try to open PARENT.<> again when you're already in root.
 
 
 ## Change-log
