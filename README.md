@@ -1,5 +1,5 @@
 # PDDuino
-A Tandy Portable Disk Drive emultaor implemented on Arduino, using a micro-sd card for storage.
+A [Tandy Portable Disk Drive](http://tandy.wiki/TPDD) emultaor implemented on Arduino, using a micro-sd card for storage.
 
 [![Video of PDDuino doing TPDD2-style bootstrap installing TS-DOS](https://img.youtube.com/vi/3PorYduc5lk/hqdefault.jpg)](https://youtu.be/3PorYduc5lk "PDDuino + Feather MounT + BCR_Breakout")
 
@@ -12,98 +12,93 @@ Earlier stages:<br>
 [![Video of PDDuino doing TPDD2-style bootstrap installing TEENY](https://img.youtube.com/vi/3ZgceFy4YZs/hqdefault.jpg)](https://youtu.be/3ZgceFy4YZs "TPDD2-style bootstrap")
 -->
 
-## Verbose Description
-PDDuino is forked from SD2TPDD.  
-This project aims to provide an easy-to-use, cheap, and reliable mass storage solution for the TRS-80 Model 100 series of computers.  
+PDDuino is based on [SD2TPDD](https://github.com/tangentdelta/SD2TPDD) by Jimmy Petit.  
 
-At the moment, PDDuino can:
-* Emulate the basic file-access functions of a TPDD1
-* Provide DME directory access
-
-This fork adds:
-* Power saving sleep mode calls
-* Disk-activity led
-* Support for Teensy 3.5/3.6 special card reader hardware
-* Support for Adafruit Feather 32u4 Adalogger
-* Support for Adafruit Feather M0 Adalogger
-* Current working directory is displayed in TS-DOS
-* TPDD2-style bootstrapper
+This fork adds:<br>
+* TPDD2-style bootstrapper (A way to install a [DOS](http://tandy.wiki/TPDD_client) onto the computer)<br>
+* Power saving sleep mode calls<br>
+* Current working directory displayed in TS-DOS<br>
+* Disk-activity led<br>
+* Support for Teensy 3.5 and 3.6 SDIO sd-card reader hardware<br>
+* Support for Adafruit Feather 32u4 Adalogger<br>
+* Support for Adafruit Feather M0 Adalogger<br>
 
 ## Requirements
 ### Hardware
-* Arduino Mega or compatible with at least one hardware serial port
-* SD card reader  
+* Arduino-compatible microcontroller board with at least one hardware serial port<br>
+* SD card reader<br>
 * RS232 level shifter for the serial port going to the TPDD client (to the M100)
 
-Arduino-compatible boards with sd card reader already built-in:  
-  [Adafruit Feather 32u4 Adalogger](https://learn.adafruit.com/adafruit-feather-32u4-adalogger)  
-  [Adafruit Feather M0 Adalogger](https://learn.adafruit.com/adafruit-feather-m0-adalogger)  
-  [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)  
-  [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)  
-  (not yet tested/ported, way overkill)[Teensy 4.1](https://www.pjrc.com/store/teensy41.html)  
+These boards have an sd-card reader already built-in, and the code has specific support for them:  
+  [Adafruit Feather 32u4 Adalogger](https://learn.adafruit.com/adafruit-feather-32u4-adalogger)<br>
+  [Adafruit Feather M0 Adalogger](https://learn.adafruit.com/adafruit-feather-m0-adalogger)<br>
+  [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)<br>
+  [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)<br>
+  (not yet tested/ported, way overkill)[Teensy 4.1](https://www.pjrc.com/store/teensy41.html)
 
-Adapter board that provides the serial connection:  
+This adapter board provides a serial connection including the level-shifter:<br>
   [MounT](https://github.com/bkw777/MounT)
 
 <!--
-(Not needed with MounT adapter)
+These are not needed if using a MounT
+
 RS-232&lt;--&gt;TTL level-shifter module:  
   [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/)  
-  (Has DTE pinout. Use the same null-modem cable as for a PC bwith no other adapters needed.)
+  This particular module has a DTE pinout and male pins. This means you can use the same null-modem cable as for connecting to a PC bwith no other adapters needed.
 
-(Not needed with MounT adapter)
 RS-232 cable:  
-  With the specific level-shifter module above, with male pins and DTE pinout: [PCCables 0103](https://www.pccables.com/products/00103.html)  
-  Or [Any of these](http://tandy.wiki/Model_100_102_200_600_Serial_Cable)
+  [PCCables 0103](https://www.pccables.com/products/00103.html)  
+  Or [Any of these](http://tandy.wiki/Model_T_Serial_Cable)
 -->
 
-Adapter board that provides power:  
-  [BCR-USB-Power adapter](http://www.github.com/bkw777/BCR_Breakout/) (the USB-Power adapter not the generic breakout adapter)
+Power source:<br>
+  [BCR-USB-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
 
 ### Software
-* Arduino IDE
-* SPI library
-* Bill Greiman's SdFat library
-* For Teensy: Teensyduino
+* Arduino IDE<br>
+* SPI library<br>
+* Bill Greiman's SdFat library<br>
+* For Teensy: Teensyduino<br>
 * For Adafruit Feather M0: Arduino SAMD boards support, Adafruit SAMD boards support
 
 ## Assembly
 ### Hardware
 * [MounT](https://github.com/bkw777/MounT)<br>
-* [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout) (the USB adapter not the generic breakout adapter)
+* [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout)
 
 ### Software
-* Load the source file into the Arduino IDE
-* Download the SPI and SdFat libraries from the library manager
-* Change any #DEFINE options needed at the top.
-  There are many configuration options in the form of #defines at the top of the file.  
-  The main one you need to set is PLATFORM, to select what type of board to build for. Several other settings automatically derive from that.
-* Compile the code and upload it to the microcontroller
-  You will need to consult your board's documentation to set up the Arduino IDE correctly to to program the board.  
-  This usually means installing one or more board support libraries, and selecting the board type from the tools menu.  
+* Load the source file into the Arduino IDE<br>
+* Download the SPI and SdFat libraries from the library manager<br>
+* Change any #DEFINE options needed at the top.<br>
+  There are many configuration options in the form of #defines at the top of the file.<br>
+  The main one you need to set is PLATFORM, to select what type of board to build for. Several other settings automatically derive from that.<br>
+* Compile the code and upload it to the microcontroller<br>
+  You will need to consult your board's documentation to set up the Arduino IDE correctly to to program the board.<br>
+  This usually means installing one or more board support libraries, and selecting the board type from the tools menu.<br>
   In the case of Teensy, you also should install "Teensyduino", and there are more options on the tools menu such as setting the cpu clock speed. You can underclock the teensy to save even more battery.
 
 ## Usage:
-### Bootstrap
-Power-off the Arduino and remove the SD card.
+### Bootstrap Procedure
+1: Power-off the mcu board (Teensy, Feather, etc) and eject the SD card.
 
-Place an ascii format BASIC file named LOADER.DO on the root of the SD card.  
-You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).  
-Even better, download mComm181.apk from here: [Kurt McCullum on Club100.org](http://www.club100.org/memfiles/index.php?&direction=0&order=&directory=Kurt%20McCullum/mComm%20Android)  
-Unzip it, and get the files ```dos100.do```, ```dos200.do```, and ```dosnec.do``` from the assets directory.  
+2: Place an ascii format BASIC file dos loader on the root of the SD card, renamed as LOADER.DO.<br>
+You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).<br>
+Even better, download mComm181.apk from here: [Kurt McCullum on Club100.org](http://www.club100.org/memfiles/index.php?&direction=0&order=&directory=Kurt%20McCullum/mComm%20Android)<br>
+Unzip it (an APK file is just a zip file), and get the files ```dos100.do```, ```dos200.do```, and ```dosnec.do``` from the "assets" directory.<br>
 Example, take ```dos100.do```, and save it as LOADER.DO on the root of the SD card.
 
-Power-on the Arduino while the SD card is still out.  
-The Arduino should now have a steady slow blinking LED, indication it's waiting for an SD card.  
+3: Power-on the Arduino while the SD card is still out.<br>
+The Arduino should now have a steady slow blinking LED, indication it's waiting for an SD card.<br>
 Don't insert the SD card yet.
 
-In BASIC do ```RUN "COM:98N1ENN"``` and press enter.
+4: In BASIC do ```RUN "COM:98N1ENN"``` and press enter.
 
-Insert the SD card.
+5: Insert the SD card.
 
-Wait, and follow the on-screen directions.
+6: Wait until the LED light goes out, then wait while the loader runs and eventually follow the on-screen directions.
 
-You now have the ram version of TS-DOS installed! You can immediately use it to browse the contents of the SD card.
+You now have the ram version of TS-DOS installed! You can immediately use it to browse the contents of the SD card.<br>
+Exit BASIC and run TS-DOS.BA from the main menu. You can delete the TMP.DO file left by the TS-DOS installer.
 
 ## Notes
 If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from <http://www.club100.org/nads/dos100.co>.
@@ -145,6 +140,7 @@ Goes away if you try to open PARENT.<> again when you're already in root.
 
 
 ## Change-log
+
 ### 20200819 b.kenyon.w@gmail.com
 * Moved PCB to its own repo
 * Added TPDD2-style bootstrap function
@@ -170,9 +166,9 @@ Goes away if you try to open PARENT.<> again when you're already in root.
 
 ---
 
-### V0.2 (7/27/2018)
+### v0.2 (7/27/2018)
 * Added DME support
 * Corrected some file name padding bugs
 
-### V0.1 (7/21/2018)
+### v0.1 (7/21/2018)
 * Initial testing release with basic TPDD1 emulation
