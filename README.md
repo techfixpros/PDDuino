@@ -150,8 +150,8 @@ Goes away if you try to open PARENT.<> again when you're already in root.
 ## Change-log
 
 ### 20200819 b.kenyon.w@gmail.com
-* Moved PCB to its own repo
-* Added TPDD2-style bootstrap function
+* Moved PCB to its own [repo](https://github.com/bkw777/MounT)  
+* Added TPDD2-style bootstrap function  
 
 ### 20200817 b.kenyon.w@gmail.com
 * Added PCB adapter "PDDuino_Feather".  
