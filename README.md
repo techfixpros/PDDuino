@@ -79,13 +79,13 @@ Power source:<br>
 
 ## Usage:
 ### Bootstrap Procedure
-Assuming you are using a MounT adapter to host a Feather or Teensy.<br>
-Assuming you are using the BCR-USB adapter to power the MounT.<br>
+Assuming you are using a [MounT](https://github.com/bkw777/MounT) adapter to host a Feather or Teensy.<br>
+Assuming you are using the [BCR-USB](https://github.com/bkw777/BCR_Breakout) adapter to power the MounT.<br>
 Assuming the portable is a Model 100.<br>
 Assuming you want to install TS-DOS.<br>
 
 1: Start with the Model 100 turned off.<br>
- Plug the MounT and BCR adapters into the Model 100 and connect the micro-usb cable from the BCR adapter to the MounT.
+ Plug the MounT and BCR adapters into the Model 100 and connect the micro-usb cable from the BCR adapter to the MounT.<br>
  Eject the SD card.
 
 2: Place an ascii format BASIC loader on the root of the SD card, renamed as LOADER.DO.<br>
@@ -107,7 +107,9 @@ You now have the ram version of TS-DOS installed! You can immediately use it to 
 Exit BASIC and run TS-DOS.BA from the main menu. You can delete the TMP.DO file.
 
 ## Notes
-If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from <http://www.club100.org/nads/dos100.co>.
+If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk.<br>
+The file must be named DOS100.CO, and be in the root directory of the media.<br>
+This file can be downloaded from <http://www.club100.org/nads/dos100.co>.
 
 ## To-Do
 * Document the various Arduino IDE setup and config quirks needed for each board.
