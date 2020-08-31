@@ -79,26 +79,32 @@ Power source:<br>
 
 ## Usage:
 ### Bootstrap Procedure
-1: Power-off the mcu board (Teensy, Feather, etc) and eject the SD card.
+Assuming you are using a MounT adapter to host a Feather or Teensy.<br>
+Assuming you are using the BCR-USB adapter to power the MounT.<br>
+Assuming the portable is a Model 100.<br>
+Assuming you want to install TS-DOS.<br>
 
-2: Place an ascii format BASIC file dos loader on the root of the SD card, renamed as LOADER.DO.<br>
+1: Start with the Model 100 turned off.<br>
+ Plug the MounT and BCR adapters into the Model 100 and connect the micro-usb cable from the BCR adapter to the MounT.
+ Eject the SD card.
+
+2: Place an ascii format BASIC loader on the root of the SD card, renamed as LOADER.DO.<br>
 You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).<br>
-Even better, download mComm181.apk from here: [Kurt McCullum on Club100.org](http://www.club100.org/memfiles/index.php?&direction=0&order=&directory=Kurt%20McCullum/mComm%20Android)<br>
-Unzip it (an APK file is just a zip file), and get the files ```dos100.do```, ```dos200.do```, and ```dosnec.do``` from the "assets" directory.<br>
-Example, take ```dos100.do```, and save it as LOADER.DO on the root of the SD card.
+Example, take ```TS-DOS.100```, and save it as ```LOADER.DO``` on the root of the SD card.<br>
+Note the two associated files ```TS-DOS.100.pre-install.txt``` and ```TS-DOS.100.post-install.txt``` .
 
-3: Power-on the Arduino while the SD card is still out.<br>
-The Arduino should now have a steady slow blinking LED, indication it's waiting for an SD card.<br>
+3: Turn on the Model 100 while the SD card is still ejected.<br>
+The Teensy or Feather should now have a steady slow blinking LED, indication it's waiting for an SD card.<br>
 Don't insert the SD card yet.
 
-4: In BASIC do ```RUN "COM:98N1ENN"``` and press enter.
+4: In BASIC do ```RUN "COM:98N1E"``` and press Enter.
 
 5: Insert the SD card.
 
 6: Wait until the LED light goes out, then wait while the loader runs and eventually follow the on-screen directions.
 
 You now have the ram version of TS-DOS installed! You can immediately use it to browse the contents of the SD card.<br>
-Exit BASIC and run TS-DOS.BA from the main menu. You can delete the TMP.DO file left by the TS-DOS installer.
+Exit BASIC and run TS-DOS.BA from the main menu. You can delete the TMP.DO file.
 
 ## Notes
 If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk. The file must be named DOS100.CO, and be in the root directory of the media. This file can be downloaded from <http://www.club100.org/nads/dos100.co>.
