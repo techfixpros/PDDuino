@@ -67,48 +67,48 @@ Power source:<br>
 * [BCR-USB-Power adapter](https://github.com/bkw777/BCR_Breakout)
 
 ### Software
-* Load the source file into the Arduino IDE<br>
-* Download the SPI and SdFat libraries from the library manager<br>
-* Change any #DEFINE options needed at the top.<br>
-  There are many configuration options in the form of #defines at the top of the file.<br>
-  The main one you need to set is PLATFORM, to select what type of board to build for. Several other settings automatically derive from that.<br>
-* Compile the code and upload it to the microcontroller<br>
-  You will need to consult your board's documentation to set up the Arduino IDE correctly to to program the board.<br>
-  This usually means installing one or more board support libraries, and selecting the board type from the tools menu.<br>
+* Load the source file into the Arduino IDE  
+* Download the SPI and SdFat libraries from the library manager  
+* Change any #DEFINE options needed at the top.  
+  There are many configuration options in the form of #defines at the top of the file.  
+  The main one you need to set is PLATFORM, to select what type of board to build for. Several other settings automatically derive from that.  
+* Compile the code and upload it to the microcontroller  
+  You will need to consult your board's documentation to set up the Arduino IDE correctly to to program the board.  
+  This usually means installing one or more board support libraries, and selecting the board type from the tools menu.  
   In the case of Teensy, you also should install "Teensyduino", and there are more options on the tools menu such as setting the cpu clock speed. You can underclock the teensy to save even more battery.
 
 ## Usage:
 ### Bootstrap Procedure
-Assuming you are using a [MounT](https://github.com/bkw777/MounT) adapter to host a Feather or Teensy.<br>
-Assuming you are using the [BCR-USB](https://github.com/bkw777/BCR_Breakout) adapter to power the MounT.<br>
-Assuming the portable is a Model 100.<br>
-Assuming you want to install TS-DOS.<br>
+Assuming you are using a [MounT](https://github.com/bkw777/MounT) adapter to host a Feather or Teensy.  
+Assuming you are using the [BCR-USB](https://github.com/bkw777/BCR_Breakout) adapter to power the MounT.  
+Assuming the portable is a Model 100.  
+Assuming you want to install TS-DOS.  
 
-1: Start with the Model 100 turned off.<br>
- Plug the MounT and BCR adapters into the Model 100 and connect the micro-usb cable from the BCR adapter to the MounT.<br>
+1. Start with the Model 100 turned off.  
+ Plug the MounT and BCR adapters into the Model 100 and connect the micro-usb cable from the BCR adapter to the MounT.  
  Eject the SD card.
 
-2: Place an ascii format BASIC loader on the root of the SD card, renamed as LOADER.DO.<br>
-You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).<br>
-Example, take ```TS-DOS.100```, and save it as ```LOADER.DO``` on the root of the SD card.<br>
+1. Place an ascii format BASIC loader on the root of the SD card, renamed as LOADER.DO.  
+You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).  
+Example, take ```TS-DOS.100```, and save it as ```LOADER.DO``` on the root of the SD card.  
 Note the two associated files ```TS-DOS.100.pre-install.txt``` and ```TS-DOS.100.post-install.txt``` .
 
-3: Turn on the Model 100 while the SD card is still ejected.<br>
-The Teensy or Feather should now have a steady slow blinking LED, indication it's waiting for an SD card.<br>
+1. Turn on the Model 100 while the SD card is still ejected.  
+The Teensy or Feather should now have a steady slow blinking LED, indication it's waiting for an SD card.  
 Don't insert the SD card yet.
 
-4: In BASIC do ```RUN "COM:98N1E"``` and press Enter.
+1. In BASIC do ```RUN "COM:98N1E"``` and press Enter.
 
-5: Insert the SD card.
+1. Insert the SD card.
 
-6: Wait until the LED light goes out, then wait while the loader runs and eventually follow the on-screen directions.
+1. Wait until the LED light goes out, then wait while the loader runs and eventually follow the on-screen directions.
 
-You now have the ram version of TS-DOS installed! You can immediately use it to browse the contents of the SD card.<br>
+You now have the ram version of TS-DOS installed! You can immediately use it to browse the contents of the SD card.  
 Exit BASIC and run TS-DOS.BA from the main menu. You can delete the TMP.DO file.
 
 ## Notes
-If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk.<br>
-The file must be named DOS100.CO, and be in the root directory of the media.<br>
+If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk.  
+The file must be named DOS100.CO, and be in the root directory of the media.  
 This file can be downloaded from <http://www.club100.org/nads/dos100.co>.
 
 ## To-Do
