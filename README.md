@@ -1,7 +1,6 @@
 # PDDuino
 A [Tandy Portable Disk Drive](http://tandy.wiki/TPDD) emultaor implemented on Arduino, using a micro-sd card for storage.
 
-https://youtu.be/LTtkjnuTSZw
 [![Video of PDDuino doing TPDD2-style bootstrap installing TS-DOS](https://img.youtube.com/vi/LTtkjnuTSZw/hqdefault.jpg)](https://youtu.be/LTtkjnuTSZw "PDDuino + Feather MounT + BCR_Breakout")
 
 <!-- old gmail acct
