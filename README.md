@@ -111,9 +111,14 @@ You now have the ram version of TS-DOS installed! You can immediately use it to 
 Exit BASIC and run TS-DOS.BA from the main menu. You can delete the TMP.DO file.
 
 ## Notes
+### Ultimate ROM II TS-DOS loader
 If you plan on using Ultimate Rom II, it has a "TS-DOS" feature which works by loading TS-DOS into ram on the fly, from a file on disk.  
 The file must be named DOS100.CO, and be in the root directory of the media.  
 This file can be downloaded from <http://www.club100.org/nads/dos100.co>.
+
+### "Model T" serial port control lines
+At power-on the Model 100 rs232 port sets all data & control pins to -5v.  
+On RUN "COM:98N1E", pins 4 and 20 go to +5v.  
 
 ## To-Do
 * Document the various Arduino IDE setup and config quirks needed for each board.
