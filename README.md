@@ -43,20 +43,27 @@ These boards have an sd-card reader already built-in, and the code has specific 
 This adapter board provides a serial connection including the level-shifter:<br>
   [MounT](https://github.com/bkw777/MounT)
 
-<!--
-These are not needed if using a MounT
+Power source:<br>
+  [BCR-USB-Power adapter](http://www.github.com/bkw777/BCR_Breakout)
 
-RS-232&lt;--&gt;TTL level-shifter module:  
+The following below are NOT needed if using the MounT board above.  
+You would only need these for bread-boarding or building in a box attached by a cable.  
+
+ RS-232&lt;--&gt;TTL level-shifter module:  
   [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/)  
-  This particular module has a DTE pinout and male pins. This means you can use the same null-modem cable as for connecting to a PC bwith no other adapters needed.
+  Male connector and DTE pinout like a PC  
+  Use the same special null-modem cable as for connecting a "Model T" to a PC.  
+  Solder jumper wires on the back of the 9-pin connector to join pins 1, 4, and 6  
+  This short-circuits the DSR/DTR detection, which pacifies TS-DOS so it will run, but means you can't test the bootstrap function except by wiring up a fake DTR/DSR signal using a pulldown resistor to gnd and a momentary button to vcc/3v3 on gpio pin 6.
 
-RS-232 cable:  
+ RS-232 cable:  
   [PCCables 0103](https://www.pccables.com/products/00103.html)  
   Or [Any of these](http://tandy.wiki/Model_T_Serial_Cable)
--->
 
-Power source:<br>
-  [BCR-USB-Power adapter](http://www.github.com/bkw777/BCR_Breakout/)
+ TODO: find a ttl-serial module that actually supports the dsr/dtr lines.  
+  https://www.pololu.com/product/126   breadboard-friendly single row of pins  
+  https://www.amazon.com/dp/B0190WSINY/  needs jumper wires to a breadboard  
+  Female plug, DCE pinout, needs a different serial cable, or adapters.
 
 ### Software
 * Arduino IDE<br>

@@ -1,7 +1,9 @@
 /*
  * PDDuino
+ * 20200828 Brian K. White b.kenyon.w@gmail.com
+ * added restart() and sendLoader() - TPDD2-style bootstrap
+ * 
  * 20180921 Brian K. White b.kenyon.w@gmail.com
- * macro-ified all the console and client serial port access to make it configurable
  * #ifdefs to enable/disable a lot of stuff
  * added sleep_mode()
  * added disk activity led
@@ -23,7 +25,7 @@
 #define Teensy_35       2
 #define Teensy_36       3
 #define Adalogger_32u4  4
-#define Adalogger_M0    5  // needs "compiler.cpp.extra_flags=-fpermissive" in ~/.arduino15/packages/adafruit/hardware/samd/1.5.4/platform.local.txt
+#define Adalogger_M0    5
 
 #define BOARD Adalogger_32u4
 
@@ -373,6 +375,19 @@ void initCard () {
   SD_LED_OFF
 }
 
+
+/*
+ * sendLoader() and restart()
+ *
+ * At power-on the Model 100 rs232 port sets all data & control pins to -5v.
+ * On RUN "COM:98N1E", pins 4 (RTS) and 20 (DTR) go to +5v.
+ * github.com/bkw777MounT connects GPIO pin 5 through MAX3232 to RS-232 pin 6 (DSR) & 8 (DCD)
+ * and connects RS-232 pin 20 (DTR) through MAX3232 to GPIO pin 6.
+ * To assert DTR (to RS-232 DSR), raise or lower GPIO pin 5 
+ * To read DSR (from RS-232 DTR), read GPIO pin 6.
+ */
+
+/* reboot */
 void(* restart) (void) = 0;
 
 // TPDD2-style bootstrap
@@ -902,9 +917,9 @@ void command_DMEReq() {  //Send the dmeLabel
     tpddWrite(0x0B);
     tpddWrite(0x20);
     for (byte i=0x00 ; i<0x06 ; i++) tpddWrite(dmeLabel[i]);
-    tpddWrite(".");
-    tpddWrite("<");
-    tpddWrite(">");
+    tpddWrite('.');
+    tpddWrite('<');
+    tpddWrite('>');
     tpddWrite(0x20);
     tpddSendChecksum();
   }else{
@@ -978,9 +993,9 @@ DEBUG_PRINTL(F("Using SDIO"));
 
   digitalWrite(DTR_PIN,LOW); // tell client we're ready
 
-  // Possible TPDD2-style automatic bootstrap.
-  // If client is waiting already at power-on,
-  // then send LOADER.BA before going into main loop()
+  // TPDD2-style automatic bootstrap.
+  // If client is open already at power-on,
+  // then send LOADER.BA instead of going into main loop()
   if(!digitalRead(DSR_PIN)) sendLoader();
 
 }
