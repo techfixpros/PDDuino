@@ -36,9 +36,12 @@
 // Example, on Teensy3.6, with the port enabled at all, the sketch must be compiled to run the cpu at a minimum of 24mhz
 // but with the port disabled, the sketch can be compiled to run at the lowest possible option of only 2Mhz,
 // and that is still plenty enough to do the TPDD job, while burning the least amount of battery.
-#define DEBUG 0                 // disable unless actually debugging, usb-serial uses battery and cpu, and code waits for console at power-on.
+#define DEBUG 0                 // disable unless actually debugging, usb-serial uses battery and cpu, also code waits for console at power-on.
 #define DEBUG_ACTIVITY_LIGHT 0  // enable the debug led in general
 #define DEBUG_SLEEP 0           // use DEBUG_LED to debug sleep_mode()
+
+// File that sendLoader() will try to send to the client.
+#define LOADER_FILE "LOADER.DO"
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,17 +206,6 @@ SdFatSdioEX SD;
 SdFat SD;
 #endif
 
-// Enable use of Teensy built-in RTC
-//#include <TimeLib.h>
-
-#if ENABLE_SLEEP
- #if defined(ARDUINO_SAMD_ZERO)
-  #include <ArduinoLowPower.h>
- #else
-  #include <avr/sleep.h>
- #endif // SAMD
-#endif // ENABLE_SLEEP
-
 #if !DISK_ACTIVITY_LIGHT
   #define PINMODE_SD_LED_OUTPUT
   #define SD_LED_ON
@@ -269,17 +261,6 @@ byte directoryDepth = 0x00;
 char tempDirectory[DIRECTORY_SZ] = "/";
 char dmeLabel[0x07] = "";  // 6 chars
 
-#if ENABLE_SLEEP
- #if defined(ARDUINO_SAMD_ZERO)
- #else
-  const byte wakeInterrupt = digitalPinToInterrupt(WAKE_PIN);
- #endif // SAMD
-  #if SLEEP_INHIBIT
-unsigned long now = millis();
-unsigned long idleSince = now;
-  #endif // SLEEP_INHIBIT
-#endif // ENABLE_SLEEP
-
 
 /*
  *
@@ -287,7 +268,48 @@ unsigned long idleSince = now;
  *
  */
 
+#if DEBUG
+void printDirectory(File dir, byte numTabs) {
+  char fileName[FILENAME_SZ] = "";
+
+  SD_LED_ON
+  while (true) {
+    entry = dir.openNextFile();
+    if (!entry) break;
+    entry.getName(fileName,FILENAME_SZ);
+    for (byte i = 0x00; i < numTabs; i++) DEBUG_PRINT(F("\t"));
+    DEBUG_PRINT(fileName);
+    if (entry.isDirectory()) {
+      DEBUG_PRINTL(F("/"));
+      DEBUG_PRINT(F("--- printDirectory(")); DEBUG_PRINT(fileName); DEBUG_PRINT(F(",")); DEBUG_PRINT(numTabs+0x01); DEBUG_PRINTL(F(") start ---"));
+      printDirectory(entry, numTabs + 0x01);
+      DEBUG_PRINT(F("--- printDirectory(")); DEBUG_PRINT(fileName); DEBUG_PRINT(F(",")); DEBUG_PRINT(numTabs+0x01); DEBUG_PRINTL(F(") end ---"));
+    } else {
+      DEBUG_PRINT(F("\t\t")); DEBUG_PRINTIL(entry.fileSize(), DEC);
+    }
+    entry.close();
+  }
+  SD_LED_OFF
+}
+#endif // DEBUG
+
 #if ENABLE_SLEEP
+#if defined(ARDUINO_SAMD_ZERO)
+ #include <ArduinoLowPower.h>
+#else
+ #include <avr/sleep.h>
+#endif // SAMD
+
+#if defined(ARDUINO_SAMD_ZERO)
+#else
+  const byte wakeInterrupt = digitalPinToInterrupt(WAKE_PIN);
+#endif // SAMD
+
+#if SLEEP_INHIBIT
+  unsigned long now = millis();
+  unsigned long idleSince = now;
+#endif // SLEEP_INHIBIT
+
 void wakeNow () {
 }
 
@@ -360,7 +382,7 @@ void initCard () {
 
   SD.chvol();
 
-  // TODO - get the FAT volume label and use it inplace of rootLabel
+  // TODO - get the FAT volume label and use it in place of rootLabel
 
   // Always do this open() & close(), even if we aren't doing the printDirectory()
   // It's needed to get the SdFat library to put the sd card to sleep.
@@ -381,23 +403,22 @@ void initCard () {
  *
  * At power-on the Model 100 rs232 port sets all data & control pins to -5v.
  * On RUN "COM:98N1E", pins 4 (RTS) and 20 (DTR) go to +5v.
- * github.com/bkw777MounT connects GPIO pin 5 through MAX3232 to RS-232 pin 6 (DSR) & 8 (DCD)
- * and connects RS-232 pin 20 (DTR) through MAX3232 to GPIO pin 6.
- * To assert DTR (to RS-232 DSR), raise or lower GPIO pin 5 
- * To read DSR (from RS-232 DTR), read GPIO pin 6.
+ * github.com/bkw777/MounT connects GPIO pin 5 through MAX3232 to RS232 DSR (DB25 pin 6) and to RS232 DCD (DB25 pin 8)
+ * and connects RS232 DTR (DB25 pin 20) through MAX3232 to GPIO pin 6.
+ * To assert DTR (to RS232 DSR), raise or lower GPIO pin 5.
+ * To read DSR (from RS232 DTR), read GPIO pin 6.
  */
 
 /* reboot */
 void(* restart) (void) = 0;
 
-// TPDD2-style bootstrap
-// TODO, some way to show the directions to the user
+/* TPDD2-style bootstrap */
 void sendLoader() {
   byte b = 0x00;
-  File f = SD.open("LOADER.DO");
+  File f = SD.open(LOADER_FILE);
   if (f) {
     SD_LED_ON
-    DEBUG_PRINTL(F("Sending LOADER.DO..."));
+    DEBUG_PRINTL(F("Sending " LOADER_FILE " ..."));
       while (f.available()) {
         b = f.read();
         CLIENT.write(b);
@@ -409,35 +430,10 @@ void sendLoader() {
     CLIENT.flush();
     CLIENT.end();
   } else {
-    DEBUG_PRINTL(F("Could not find LOADER.DO"));
+    DEBUG_PRINT(F("Could not find " LOADER_FILE " ..."));
   }
-  restart();
+  restart(); // go back to normal TPDD emulation mode
 }
-
-#if DEBUG
-void printDirectory(File dir, byte numTabs) {
-  char fileName[FILENAME_SZ] = "";
-
-  SD_LED_ON
-  while (true) {
-    entry = dir.openNextFile();
-    if (!entry) break;
-    entry.getName(fileName,FILENAME_SZ);
-    for (byte i = 0x00; i < numTabs; i++) DEBUG_PRINT(F("\t"));
-    DEBUG_PRINT(fileName);
-    if (entry.isDirectory()) {
-      DEBUG_PRINTL(F("/"));
-      DEBUG_PRINT(F("--- printDirectory(")); DEBUG_PRINT(fileName); DEBUG_PRINT(F(",")); DEBUG_PRINT(numTabs+0x01); DEBUG_PRINTL(F(") start ---"));
-      printDirectory(entry, numTabs + 0x01);
-      DEBUG_PRINT(F("--- printDirectory(")); DEBUG_PRINT(fileName); DEBUG_PRINT(F(",")); DEBUG_PRINT(numTabs+0x01); DEBUG_PRINTL(F(") end ---"));
-    } else {
-      DEBUG_PRINT(F("\t\t")); DEBUG_PRINTIL(entry.fileSize(), DEC);
-    }
-    entry.close();
-  }
-  SD_LED_OFF
-}
-#endif // DEBUG
 
 // Append a string to directory[]
 void directoryAppend(char* c){
@@ -945,7 +941,7 @@ void setup() {
   // DSR/DTR
   pinMode(DTR_PIN, OUTPUT);
   digitalWrite(DTR_PIN,HIGH);  // tell client we're not ready
-  pinMode(DSR_PIN, INPUT);
+  pinMode(DSR_PIN, INPUT_PULLUP);
 
 // if debug console enabled, blink led and wait for console to be attached before proceeding
 #if DEBUG && defined(CONSOLE)
@@ -1008,21 +1004,21 @@ DEBUG_PRINTL(F("Using SDIO"));
  */
 
 void loop() {
-  byte rType = 0x00; //Current request type (command type)
-  byte rLength = 0x00; //Current request length (command length)
-  byte diff = 0x00;  //Difference between the head and tail buffer indexes
+  byte rType = 0x00; // Current request type (command type)
+  byte rLength = 0x00; // Current request length (command length)
+  byte diff = 0x00;  // Difference between the head and tail buffer indexes
 
   DEBUG_PRINTL(F("loop(): start"));
-  state = 0x00; //0 = waiting for command, 1 = waiting for full command, 2 = have full command
+  state = 0x00; // 0 = waiting for command, 1 = waiting for full command, 2 = have full command
 
-#if ENABLE_SLEEP
-  sleepNow();
-#endif // ENABLE_SLEEP
-  while(state<0x02){ //While waiting for a command...
+//#if ENABLE_SLEEP
+//  sleepNow();
+//#endif // ENABLE_SLEEP
+  while(state<0x02){ // While waiting for a command...
 #if ENABLE_SLEEP
     sleepNow();
 #endif // ENABLE_SLEEP
-    while (CLIENT.available() > 0x00){  //While there's data to read from the TPDD port...
+    while (CLIENT.available() > 0x00){ // While there's data to read from the TPDD port...
 #if ENABLE_SLEEP
     #if SLEEP_INHIBIT
       idleSince = millis();
@@ -1078,7 +1074,7 @@ void loop() {
   DEBUG_PRINTL(DME?'D':'.');
 #endif
 
-  switch(rType){  //Select the command handler routine to jump to based on the command type
+  switch(rType){  // Select the command handler routine to jump to based on the command type
     case 0x00: command_reference(); break;
     case 0x01: command_open(); break;
     case 0x02: command_close(); break;
@@ -1087,10 +1083,10 @@ void loop() {
     case 0x05: command_delete(); break;
     case 0x06: command_format(); break;
     case 0x07: command_status(); break;
-    case 0x08: command_DMEReq(); break; //DME Command
+    case 0x08: command_DMEReq(); break; // DME Command
     case 0x0C: command_condition(); break;
     case 0x0D: command_rename(); break;
-    default: return_normal(0x36); break;  //Send a normal return with a parameter error if the command is not implemented
+    default: return_normal(0x36); break;  // Send a normal return with a parameter error if the command is not implemented
   }
 
 #if DEBUG > 1
@@ -1100,7 +1096,7 @@ void loop() {
   DEBUG_PRINT("->");
 #endif
 
-  tail = tail+rLength+0x05;  //Increment the tail index past the previous command
+  tail = tail+rLength+0x05;  // Increment the tail index past the previous command
 
 #if DEBUG > 1
   DEBUG_PRINTIL(tail,HEX);
