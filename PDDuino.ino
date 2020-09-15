@@ -78,11 +78,12 @@
   #define SD_CS_PIN 4                      // sd card reader chip-select pin #, usually automatic
   //#define SD_CD_PIN 7                    // sd card reader card-detect pin #, usually none
   //#define DISABLE_CS 10               // Disable other SPI device on this pin, usully none, assume SD is only SPI device
+  //#define SD_SPI_MHZ 12               // override default SPI clock for SD card reader
   //#define USE_SDIO                    // sd card reader is connected by SDIO instead of SPI (Teensy 3.5/3.6/4.1)
   #define ENABLE_SLEEP                  // sleepNow() while idle for power saving
+  //#define USE_ALP                     // Use ArduinoLowPower library for sleepNow(), otherwise use avr/sleep.h
   #define WAKE_PIN 0                    // CLIENT RX pin#, interrupt is attached to wake from sleepNow()
   //#define SLEEP_DELAY 5000            // Delay in ms before sleeping
-  //#define USE_ALP                     // Use ArduinoLowPower library for sleepNow(), otherwise use avr/sleep.h
   #define PINMODE_SD_LED_OUTPUT pinMode(LED_BUILTIN,OUTPUT);
   #define SD_LED_ON digitalWrite(LED_BUILTIN,HIGH);
   #define SD_LED_OFF digitalWrite(LED_BUILTIN,LOW);
@@ -110,11 +111,12 @@
   //#define SD_CS_PIN SS
   //#define SD_CD_PIN 7
   //#define DISABLE_CS 10
+  //#define SD_SPI_MHZ 12
   #define USE_SDIO
   #define ENABLE_SLEEP
+  //#define USE_ALP
   #define WAKE_PIN 0
   //#define SLEEP_DELAY 5000
-  //#define USE_ALP
   // Main LED: PB5
   #define PINMODE_SD_LED_OUTPUT DDRB = DDRB |= 1UL << 5;
   #define SD_LED_ON PORTB |= _BV(5);
@@ -135,11 +137,12 @@
   #define SD_CS_PIN 4 
   //#define SD_CD_PIN 7
   //#define DISABLE_CS 10
+  //#define SD_SPI_MHZ 12
   //#define USE_SDIO
   #define ENABLE_SLEEP
+  //#define USE_ALP
   #define WAKE_PIN 0
   #define SLEEP_DELAY 5000          // Adalogger 32u4 needs a few seconds before sleeping
-  //#define USE_ALP
   // Green LED near card reader: PB4
   #define PINMODE_SD_LED_OUTPUT DDRB = DDRB |= 1UL << 4;
   #define SD_LED_ON PORTB |= _BV(4);
@@ -159,9 +162,10 @@
   #define DSR_PIN 6
   #define SD_CS_PIN 4
   //#define DISABLE_CS 10
+  #define SD_SPI_MHZ 12  // https://github.com/adafruit/ArduinoCore-samd/pull/186
   //#define USE_SDIO
-  //#define USE_ALP
   #define ENABLE_SLEEP
+  #define USE_ALP
   #define WAKE_PIN 0
   #define SLEEP_DELAY 250
   #define USE_ALP
@@ -184,11 +188,12 @@
 //  #define SD_CS_PIN 4
 //  //#define SD_CD_PIN 7
 //  //#define DISABLE_CS 10
+//  //#define SD_SPI_MHZ 12
 //  //#define USE_SDIO
 //  #define ENABLE_SLEEP
+//  //#define USE_ALP
 //  #define WAKE_PIN 0
 //  //#define SLEEP_DELAY 5000
-//  //#define USE_ALP
 //  #define PINMODE_SD_LED_OUTPUT pinMode(LED_BUILTIN,OUTPUT);
 //  #define SD_LED_ON digitalWrite(LED_BUILTIN,HIGH);
 //  #define SD_LED_OFF digitalWrite(LED_BUILTIN,LOW);
