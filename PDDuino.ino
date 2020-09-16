@@ -18,7 +18,7 @@
 // Example, on Teensy 3.5/3.6, with the port enabled at all, the sketch must be compiled to run the cpu at a minimum of 24mhz
 // but with the port disabled, the sketch can be compiled to run at only 2Mhz. (Tools -> CPU Speed).
 // DEBUG will also be disabled if the selected BOARD_* section below doesn't define any CONSOLE port.
-//#define DEBUG 3     // disable unless actually debugging, uses more battery, prevents full sleep, hangs at boot until connected
+//#define DEBUG 1     // disable unless actually debugging, uses more battery, prevents full sleep, hangs at boot until connected
 //#define DEBUG_LED   // use led to see (some) activity even if no DEBUG or CONSOLE
 //#define DEBUG_SLEEP // use DEBUG_LED to debug sleepNow()
 
@@ -73,17 +73,17 @@
   // User-defined platform details
   #define CONSOLE SERIAL_PORT_MONITOR      // where to send debug messages, if enabled. (Serial)
   #define CLIENT SERIAL_PORT_HARDWARE_OPEN // what serial port is the TPDD client connected to (Serial1)
-  #define DTR_PIN 5                         // pin to output DTR, github.com/bkw777/MounT uses pin 5
+  #define DTR_PIN 5                        // pin to output DTR, github.com/bkw777/MounT uses pin 5
   #define DSR_PIN 6                        // pin to input DSR, github.com/bkw777/MounT uses pin6
-  #define SD_CS_PIN 4                      // sd card reader chip-select pin #, usually automatic
-  //#define SD_CD_PIN 7                    // sd card reader card-detect pin #, usually none
-  //#define DISABLE_CS 10               // Disable other SPI device on this pin, usully none, assume SD is only SPI device
-  //#define SD_SPI_MHZ 12               // override default SPI clock for SD card reader
-  //#define USE_SDIO                    // sd card reader is connected by SDIO instead of SPI (Teensy 3.5/3.6/4.1)
-  #define ENABLE_SLEEP                  // sleepNow() while idle for power saving
-  //#define USE_ALP                     // Use ArduinoLowPower library for sleepNow(), otherwise use avr/sleep.h
-  #define WAKE_PIN 0                    // CLIENT RX pin#, interrupt is attached to wake from sleepNow()
-  //#define SLEEP_DELAY 5000            // Delay in ms before sleeping
+  //#define SD_CS_PIN SS                   // sd card reader chip-select pin #, sometimes automatic
+  //#define SD_CD_PIN 7                    // sd card reader card-detect pin #, interrupt & restart if card ejected
+  //#define DISABLE_CS 10                  // Disable other SPI device on this pin, usully none, assume SD is only SPI device
+  //#define SD_SPI_MHZ 12                  // override default SPI clock for SD card reader
+  //#define USE_SDIO                       // sd card reader is connected by SDIO instead of SPI (Teensy 3.5/3.6/4.1)
+  #define ENABLE_SLEEP                     // sleepNow() while idle for power saving
+  //#define USE_ALP                        // Use ArduinoLowPower instead of avr/sleep.h, SAMD only (Feather M0)
+  #define CLIENT_RX_PIN 0                  // CLIENT RX pin#, interrupt is attached to wake from sleepNow()
+  //#define SLEEP_DELAY 5000               // Delay in ms before sleeping
   #define PINMODE_SD_LED_OUTPUT pinMode(LED_BUILTIN,OUTPUT);
   #define SD_LED_ON digitalWrite(LED_BUILTIN,HIGH);
   #define SD_LED_OFF digitalWrite(LED_BUILTIN,LOW);
@@ -108,14 +108,14 @@
   #define CLIENT SERIAL_PORT_HARDWARE_OPEN
   #define DTR_PIN 5
   #define DSR_PIN 6
-  //#define SD_CS_PIN SS
+  //#define SD_CS_PIN 4
   //#define SD_CD_PIN 7
   //#define DISABLE_CS 10
   //#define SD_SPI_MHZ 12
   #define USE_SDIO
   #define ENABLE_SLEEP
   //#define USE_ALP
-  #define WAKE_PIN 0
+  #define CLIENT_RX_PIN 0
   //#define SLEEP_DELAY 5000
   // Main LED: PB5
   #define PINMODE_SD_LED_OUTPUT DDRB = DDRB |= 1UL << 5;
@@ -134,14 +134,14 @@
   #define CLIENT SERIAL_PORT_HARDWARE_OPEN
   #define DTR_PIN 5
   #define DSR_PIN 6
-  #define SD_CS_PIN 4 
-  //#define SD_CD_PIN 7
+  #define SD_CS_PIN 4
+  #define SD_CD_PIN 7
   //#define DISABLE_CS 10
   //#define SD_SPI_MHZ 12
   //#define USE_SDIO
   #define ENABLE_SLEEP
   //#define USE_ALP
-  #define WAKE_PIN 0
+  #define CLIENT_RX_PIN 0
   #define SLEEP_DELAY 5000          // Adalogger 32u4 needs a few seconds before sleeping
   // Green LED near card reader: PB4
   #define PINMODE_SD_LED_OUTPUT DDRB = DDRB |= 1UL << 4;
@@ -161,14 +161,14 @@
   #define DTR_PIN 5
   #define DSR_PIN 6
   #define SD_CS_PIN 4
+  #define SD_CD_PIN 7
   //#define DISABLE_CS 10
   #define SD_SPI_MHZ 12  // https://github.com/adafruit/ArduinoCore-samd/pull/186
   //#define USE_SDIO
   #define ENABLE_SLEEP
   #define USE_ALP
-  #define WAKE_PIN 0
+  #define CLIENT_RX_PIN 0
   #define SLEEP_DELAY 250
-  #define USE_ALP
   // Green LED near card reader: PA6 / pin 8
   #define PINMODE_SD_LED_OUTPUT pinMode(8,OUTPUT);
   #define SD_LED_ON digitalWrite(8,HIGH);
@@ -192,7 +192,7 @@
 //  //#define USE_SDIO
 //  #define ENABLE_SLEEP
 //  //#define USE_ALP
-//  #define WAKE_PIN 0
+//  #define CLIENT_RX_PIN 0
 //  //#define SLEEP_DELAY 5000
 //  #define PINMODE_SD_LED_OUTPUT pinMode(LED_BUILTIN,OUTPUT);
 //  #define SD_LED_ON digitalWrite(LED_BUILTIN,HIGH);
@@ -208,9 +208,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-#include <BlockDriver.h>
-#include <FreeStack.h>
-#include <MinimumSerial.h>
 #if !defined(USE_SDIO)
 #include <SPI.h>
 #endif
@@ -299,12 +296,41 @@ byte directoryDepth = 0x00;
 char tempDirectory[DIRECTORY_SZ] = "/";
 char dmeLabel[0x07] = "";  // 6 chars + NULL
 
+#if defined(ENABLE_SLEEP)
+ #if defined(SLEEP_DELAY)
+  unsigned long now = millis();
+  unsigned long idleSince = now;
+ #endif // SLEEP_DELAY
+ #if !defined(USE_ALP)
+  const byte rxInterrupt = digitalPinToInterrupt(CLIENT_RX_PIN);
+ #endif // !USE_ALP
+#endif // ENABLE_SLEEP
+
+#if defined(SD_CD_PIN)
+  const byte cdInterrupt = digitalPinToInterrupt(SD_CD_PIN);
+#endif // SD_CD_PIN
 
 /*
  *
  * General misc. routines
  *
  */
+
+/* reboot */
+// This hangs at boot if debug console is enabled. It seems to break the CONSOLE port on the way down,
+// and then on the way back up, it sits in setup() waiting for the CONSOLE port.
+// The fix is probaby to reorganize the sketch to avoid needing to restart:
+// https://forum.arduino.cc/index.php?topic=381083.0
+//void setup() { // leave empty }
+//void loop()
+//{
+//  // ... initialize application here
+//  while (// test application exit condition here )
+//  {
+//    // application loop code here
+//  }
+//}
+void(* restart) (void) = 0;
 
 #if DEBUG
 void printDirectory(File dir, byte numTabs) {
@@ -332,17 +358,7 @@ void printDirectory(File dir, byte numTabs) {
 #endif // DEBUG
 
 #if defined(ENABLE_SLEEP)
- #if !defined(USE_ALP)
-  const byte wakeInterrupt = digitalPinToInterrupt(WAKE_PIN);
- #endif // !USE_ALP
-
- #if defined(SLEEP_DELAY)
-  unsigned long now = millis();
-  unsigned long idleSince = now;
- #endif // SLEEP_DELAY
-
-void wakeNow () {
-}
+void wakeNow () {}
 
 void sleepNow() {
  #if defined(SLEEP_DELAY)
@@ -350,22 +366,29 @@ void sleepNow() {
   if ((now-idleSince)<SLEEP_DELAY) return;
   idleSince = now;
  #endif // SLEEP_DELAY
- #if defined(USE_ALP)
-  LowPower.attachInterruptWakeup(WAKE_PIN, wakeNow, CHANGE);
-  LowPower.sleep();
- #else
-  // if the debug console is enabled, then don't sleep deep enough to power off the usb port
-  #if DEBUG
-  set_sleep_mode(SLEEP_MODE_IDLE);
-  #else
-  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-  #endif // DEBUG
+ #if defined(DEBUG_SLEEP)
   DEBUG_LED_ON
-  attachInterrupt(wakeInterrupt,wakeNow,CHANGE);
+ #endif
+ #if defined(USE_ALP)
+  LowPower.attachInterruptWakeup(CLIENT_RX_PIN, wakeNow, CHANGE);
+  #if DEBUG
+  LowPower.idle();  // .idle() .sleep() .deepSleep()
+  #else
+  LowPower.sleep();  // .idle() .sleep() .deepSleep()
+  #endif
+ #else
+  #if DEBUG
+  set_sleep_mode(SLEEP_MODE_STANDBY);  // power down breaks usb serial connection
+  #else
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN); // lightest to deepest: _IDLE _ADC _PWR_SAVE _STANDBY _PWR_DOWN
+  #endif // DEBUG
+  attachInterrupt(rxInterrupt,wakeNow,CHANGE);
   sleep_mode();
-  detachInterrupt(wakeInterrupt);
+  detachInterrupt(rxInterrupt);
  #endif // USE_ALP
+ #if defined(DEBUG_SLEEP)
   DEBUG_LED_OFF
+ #endif
 }
 #endif // ENABLE_SLEEP
 
@@ -421,14 +444,13 @@ void initCard () {
   root = SD.open(directory);
 #if DEBUG
   DEBUG_PRINTL(F("--- printDirectory(root,0) start ---"));
-  printDirectory(root,0x00);
+  printDirectory(root,0);
   DEBUG_PRINTL(F("--- printDirectory(root,0) end ---"));
 #endif
   root.close();
 
   SD_LED_OFF
 }
-
 
 #if defined(LOADER_FILE)
 /*
@@ -441,9 +463,6 @@ void initCard () {
  * To assert DTR (to RS232 DSR), raise or lower GPIO pin 5.
  * To read DSR (from RS232 DTR), read GPIO pin 6.
  */
-
-/* reboot */
-void(* restart) (void) = 0;
 
 /* TPDD2-style bootstrap */
 void sendLoader() {
@@ -470,7 +489,12 @@ void sendLoader() {
       }
     f.close();
     SD_LED_OFF
+    CLIENT.flush();
     CLIENT.write(0x1A);
+#if defined(BOARD_FEATHERM0)    // no idea why but it works
+    delay(250);                 // delay alone before 0x1A didn't work
+    CLIENT.write(0x1A);         // needs the double-tap
+#endif // BOARD_FEATHERM0
     CLIENT.flush();
     CLIENT.end();
     DEBUG_PRINTL(F("DONE"));
@@ -594,7 +618,6 @@ void return_normal(byte errorCode){ //Sends a normal return to the TPDD port wit
 
 void return_reference(){  //Sends a reference return to the TPDD port
   byte term = 0x06;
-  bool terminated = false;
   DEBUG_PRINTL(F("return_reference()"));
 
   tpddWrite(0x11);  //Return type (reference)
@@ -979,10 +1002,13 @@ void command_DMEReq() {  //Send the dmeLabel
 void setup() {
   PINMODE_SD_LED_OUTPUT
   PINMODE_DEBUG_LED_OUTPUT
-  //pinMode(WAKE_PIN, INPUT_PULLUP);  // typical, but don't do on RX
+  // pinMode(CLIENT_RX_PIN, INPUT_PULLUP);  // typical, but don't do on RX
   SD_LED_OFF
   DEBUG_LED_OFF
   digitalWrite(LED_BUILTIN,LOW);  // turn standard main led off, besides SD and DEBUG LED macros
+#if defined(SD_CD_PIN)
+  pinMode(SD_CD_PIN,INPUT_PULLUP);
+#endif // SD_CD_PIN
 
   // DSR/DTR
 #if defined(DTR_PIN)
@@ -998,9 +1024,9 @@ void setup() {
   CONSOLE.begin(115200);
     while(!CONSOLE){
       DEBUG_LED_ON
-      delay(0x20);
+      delay(20);
       DEBUG_LED_OFF
-      delay(0x200);
+      delay(800);
     }
   CONSOLE.flush();
 #endif
@@ -1038,6 +1064,17 @@ void setup() {
   DEBUG_PRINTL(F("disabled"));
 #endif // DSR_PIN && LOADER_FILE
 
+  DEBUG_PRINT(F("Card-Detect pin: "));
+#if defined(SD_CD_PIN)
+  DEBUG_PRINT(SD_CD_PIN);
+  DEBUG_PRINT(F(" INT: "));
+  DEBUG_PRINT(digitalPinToInterrupt(SD_CD_PIN));
+  DEBUG_PRINT(F(" state: "));
+  DEBUG_PRINTL(digitalRead(SD_CD_PIN));
+#else
+  DEBUG_PRINTL(F("not enabled"));
+#endif // SD_CD_PIN
+
   for(byte i=0x00;i<FILE_BUFFER_SZ;++i) dataBuffer[i] = 0x00;
 
 #if defined(USE_SDIO)
@@ -1067,6 +1104,11 @@ void setup() {
 #endif  // !USE_SDIO
 
   initCard();
+
+// this is after initCard() so that while ejected, we wait in initCard() rather than in a boot loop.
+#if defined(SD_CD_PIN)
+  attachInterrupt(cdInterrupt, restart, LOW);
+#endif
 
 #if defined(DTR_PIN)
   digitalWrite(DTR_PIN,LOW); // tell client we're ready
@@ -1101,9 +1143,6 @@ void loop() {
   DEBUG_PRINTL(F("loop(): start"));
   state = 0x00; // 0 = waiting for command, 1 = waiting for full command, 2 = have full command
 
-//#if defined(ENABLE_SLEEP)
-//  sleepNow();
-//#endif // ENABLE_SLEEP
   while(state<0x02){ // While waiting for a command...
 #if defined(ENABLE_SLEEP)
     sleepNow();
