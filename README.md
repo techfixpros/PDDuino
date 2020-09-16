@@ -51,8 +51,8 @@ This adapter takes the place of a serial cable, and includes the level-shifter:<
 This adapter can power the microcontroller board from the M100:<br>
   [BCR-USB-Power adapter](http://www.github.com/bkw777/BCR_Breakout)
 
-The following below are NOT needed if using the MounT adapter.  
-You would only need these for bread-boarding or building in a box attached by a cable.  
+**The following below are NOT needed if using the MounT adapter.  
+You would only need these for bread-boarding or building in a box attached by a cable.**
 
  RS-232&lt;--&gt;TTL/CMOS level-shifter module:  
   [NulSom](https://www.amazon.com/dp/B00OPU2QJ4/)  
