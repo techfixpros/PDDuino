@@ -61,7 +61,7 @@ void sleepNow() {
   #endif
  #else
   #if DEBUG
-  set_sleep_mode(SLEEP_MODE_STANDBY);  // power down breaks usb serial connection
+  set_sleep_mode(SLEEP_MODE_IDLE);  // power down breaks usb serial connection
   #else
   set_sleep_mode(SLEEP_MODE_PWR_DOWN); // lightest to deepest: _IDLE _ADC _PWR_SAVE _STANDBY _PWR_DOWN
   #endif // DEBUG

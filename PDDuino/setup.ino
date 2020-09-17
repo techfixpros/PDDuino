@@ -1,5 +1,4 @@
 void setup() {
-
   // leds
   PINMODE_SD_LED_OUTPUT
   PINMODE_DEBUG_LED_OUTPUT
@@ -34,7 +33,7 @@ void setup() {
   CONSOLE.flush();
 #endif
 
-  DEBUG_PRINTL(F("init()"));
+  DEBUG_PRINTL(F("setup()"));
 
   // connect the client serial port
   CLIENT.begin(19200);

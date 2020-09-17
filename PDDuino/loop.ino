@@ -1,5 +1,5 @@
 void loop () {
- DEBUG_PRINTL(F("main(): start"));
+ DEBUG_PRINTL(F("loop(): start"));
 
   byte rType = 0x00; // Current request type (command type)
   byte rLength = 0x00; // Current request length (command length)
