@@ -15,6 +15,7 @@
 void(* restart) (void) = 0;
 
 #if DEBUG
+void printDirectory(File dir, byte numTabs);
 void printDirectory(File dir, byte numTabs) {
   char fileName[FILENAME_SZ] = "";
 
