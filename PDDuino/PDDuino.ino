@@ -12,13 +12,23 @@
 // 0.2   20180728 Jimmy Pettit original
 
 // Debugging settings
+
+// Don't try to enable DEBUG and SLEEP at the same time.
+// Traffic on the usb console seems to be triggering the interrup to wake up, at least on 32u4
+// This behavior is probably different for every different board.
+// Debug sleep just with the led. (def DEBUG_LED and DEBUG_SLEEP, undef DEBUG)
+// Everything seems to be working as desired with DEBUG disabled.
+// Eject the card and the SD_LED shows that we rebooted and are waiting in initCard() again.
+// Insert a card and it inits, and 5 seconds later the DEBUG_LED comes on and stays on.
+// Request a directory listing in TS-DOS and the led goes out, and the directory listing works, and 5 seconds later the led comes back on.
+
 // Console is 115200 no flow
 // DEBUG: 0 or undef = disable console, 1 = enabled, least verbose, 2+ = enabled, more verbose (max 3)
-// When disabled, the port itself is disabled, which frees up significant ram and cpu on some hardware.
+// When disabled, the port itself is disabled, which frees up ram and cpu on some hardware.
 // On Teensy 3.5/3.6, the cpu must run at 24 MHz or more to enable the usb serial console.
-// The sketch can run at the lowest setting, only 2 MHz without the usb serial console. (Tools -> CPU Speed).
+// Without the usb console, the sketch can run at the lowest setting, only 2 MHz. (Tools -> CPU Speed).
 // DEBUG will also be disabled if board_*.h doesn't define CONSOLE.
-//#define DEBUG 1     // disable unless actually debugging, uses more battery, prevents full sleep, hangs at boot until connected
+//#define DEBUG 2     // disable unless actually debugging, uses more battery, prevents full sleep, hangs at boot until connected
 //#define DEBUG_LED   // use led to see (some) activity even if no DEBUG or CONSOLE (waiting for console, sleeping)
 //#define DEBUG_SLEEP // use DEBUG_LED to debug sleepNow()
 
@@ -119,6 +129,10 @@ char dmeLabel[0x07] = "";  // 6 chars + NULL
 #if defined(SD_CD_PIN)
   const byte cdInterrupt = digitalPinToInterrupt(SD_CD_PIN);
 #endif // SD_CD_PIN
+
+#if defined(DSR_PIN)
+  byte dsrState = HIGH;
+#endif // DSR_PIN
 
 //void setup() {}
 //void loop() {}

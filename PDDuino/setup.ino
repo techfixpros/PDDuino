@@ -58,24 +58,35 @@ void setup() {
 #endif // DTR_PIN
   DEBUG_PRINTL("");
 
-  DEBUG_PRINT("LOADER_FILE: ");
-#if defined(LOADER_FILE)
-  DEBUG_PRINT(LOADER_FILE);
-#endif // LOADER_FILE
-  DEBUG_PRINTL("");
-
-  DEBUG_PRINT(F("sendLoader(): "));
+  DEBUG_PRINT(F("sendLoader: "));
 #if defined(DSR_PIN) && defined(LOADER_FILE)
-  DEBUG_PRINTL(F("enabled"));
+  DEBUG_PRINT(F("enabled, file:"));
+  DEBUG_PRINTL(LOADER_FILE);
 #else
   DEBUG_PRINTL(F("disabled"));
 #endif // DSR_PIN && LOADER_FILE
 
-  DEBUG_PRINT(F("Card-Detect pin: "));
+
+  DEBUG_PRINT(F("sleep: "));
+#if defined(ENABLE_SLEEP)
+  DEBUG_PRINT(F("enabled, delay:"));
+  DEBUG_PRINT(SLEEP_DELAY);
+  DEBUG_PRINT(F("ms, "));
+ #if defined(USE_ALP)
+  DEBUG_PRINTL(F("ArduinoLowPower.h"));
+ #else
+  DEBUG_PRINTL(F("avr/sleep.h"));
+ #endif // USE_ALP
+#else
+  DEBUG_PRINTL(F("disabled"));
+#endif // ENABLE_SLEEP
+
+  DEBUG_PRINT(F("Card-Detect: "));
 #if defined(SD_CD_PIN)
+  DEBUG_PRINT("enabled pin:");
   DEBUG_PRINT(SD_CD_PIN);
-  DEBUG_PRINT(F(" INT: "));
-  DEBUG_PRINT(digitalPinToInterrupt(SD_CD_PIN));
+  DEBUG_PRINT(F(" intr:"));
+  DEBUG_PRINT(cdInterrupt);
   DEBUG_PRINT(F(" state: "));
   DEBUG_PRINTL(digitalRead(SD_CD_PIN));
 #else
@@ -129,11 +140,13 @@ void setup() {
 
 // before proceeding to the TPDD main loop, see if client wants to bootstrap instead
 #if defined(DSR_PIN) && defined(LOADER_FILE)
-  if(!digitalRead(DSR_PIN)) {
-    DEBUG_PRINTL(F("Client is asserting DSR. Doing sendLoader()."));
+  DEBUG_PRINT(F("DSR: "));
+  dsrState = digitalRead(DSR_PIN);
+  if(dsrState==LOW) {
+    DEBUG_PRINTL(F("LOW. Doing sendLoader()."));
     sendLoader();
   } else {
-    DEBUG_PRINTL(F("Client is not asserting DSR. Doing loop()."));
+    DEBUG_PRINTL(F("HIGH. Doing loop()."));
   }
 #endif // DSR_PIN && LOADER_FILE
 

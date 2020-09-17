@@ -44,16 +44,17 @@ void printDirectory(File dir, byte numTabs) {
 void wakeNow () {}
 
 void sleepNow() {
- #if defined(SLEEP_DELAY)
+ #if defined(SLEEP_DELAY)  // no-op until SLEEP_DELAY expires
   now = millis();
   if ((now-idleSince)<SLEEP_DELAY) return;
   idleSince = now;
  #endif // SLEEP_DELAY
+ //DEBUG_PRINT(F("sleep..."));
  #if defined(DEBUG_SLEEP)
   DEBUG_LED_ON
  #endif
  #if defined(USE_ALP)
-  LowPower.attachInterruptWakeup(CLIENT_RX_PIN, wakeNow, CHANGE);
+  LowPower.attachInterruptWakeup(CLIENT_RX_PIN, wakeNow,LOW);
   #if DEBUG
   LowPower.idle();  // .idle() .sleep() .deepSleep()
   #else
@@ -65,10 +66,11 @@ void sleepNow() {
   #else
   set_sleep_mode(SLEEP_MODE_PWR_DOWN); // lightest to deepest: _IDLE _ADC _PWR_SAVE _STANDBY _PWR_DOWN
   #endif // DEBUG
-  attachInterrupt(rxInterrupt,wakeNow,CHANGE);
+  attachInterrupt(rxInterrupt,wakeNow,LOW); // uart RX/TX rest high
   sleep_mode();
   detachInterrupt(rxInterrupt);
  #endif // USE_ALP
+  //DEBUG_PRINTL(F("wake"));
  #if defined(DEBUG_SLEEP)
   DEBUG_LED_OFF
  #endif
