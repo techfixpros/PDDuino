@@ -3,7 +3,7 @@ Install Arduino IDE:
 
 Install libraries that all boards use:
 Tools -> Manage Libraries...
-  "SdFat"  (Bill Greiman, not the Adafruit fork, even if for the Adafruit boards)
+  "SdFat"  (Bill Greiman, not the Adafruit fork, even for the Adafruit boards)
 
 Board-specific one-time setups, and compile-time usage:
 
@@ -24,7 +24,7 @@ Teensy 3.5
 install:
   https://www.pjrc.com/teensy/td_download.html
 use:
-  Tools -> Board -> Teenyduino -> Teensy 3.5
+  Tools -> Board -> Teensyduino -> Teensy 3.5
 for normal use:
   Tools -> CPU Speed -> 2MHz
   Tools -> Optimize -> "Fastest with LTO"
@@ -36,7 +36,7 @@ Teensy 3.6
 install:
   https://www.pjrc.com/teensy/td_download.html
 use:
-  Tools -> Board -> Teenyduino -> Teensy 3.6
+  Tools -> Board -> Teensyduino -> Teensy 3.6
 for normal use:
   Tools -> CPU Speed -> 2MHz
   Tools -> Optimize -> "Fastest with LTO"

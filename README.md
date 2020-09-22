@@ -16,20 +16,33 @@ Earlier stages:<br>
 [![Video of PDDuino doing TPDD2-style bootstrap installing TEENY](https://img.youtube.com/vi/3ZgceFy4YZs/hqdefault.jpg)](https://youtu.be/3ZgceFy4YZs "TPDD2-style bootstrap")
 -->
 
-PDDuino is based on [SD2TPDD](https://github.com/tangentdelta/SD2TPDD) by Jimmy Petit.  
+PDDuino was based originally on [SD2TPDD](https://github.com/tangentdelta/SD2TPDD) by Jimmy Petit.  
 
-This fork adds:<br>
-* TPDD2-style bootstrapper (A way to install a [TPDD Client](http://tandy.wiki/TPDD_client) onto the computer)<br>
-* Power saving sleep mode<br>
-* Current working directory displayed in TS-DOS<br>
-* Disk-activity led<br>
-* Support for Teensy 3.5 and 3.6 SDIO sd-card reader hardware<br>
-* Support for Adafruit Feather 32u4 Adalogger<br>
-* Support for Adafruit Feather M0 Adalogger (20200916 broken)<br>
+## Features
+* Tandy Portable Disk Drive 1 emulation
+* TS-DOS directories<br>
+* TPDD2-style bootstrapper to install a [TPDD Client](http://tandy.wiki/TPDD_client) onto the computer<br>
+
+## Hardware support
+PDDuino runs on most any Arduino-compatible microcontroller.  
+
+Configs are already included to support the following particularly handy development boards that have a small form factor, built-in usb power & console, and built-in SD-card reader, and which are supported by [MounT](https://github.com/bkw777/MounT) and [BCR_Breakout](https://github.com/bkw777/BCR_Breakout) for the serial connection, power, and physical attachment to the computer.  
+ * Teensy [3.5](https://www.pjrc.com/store/teensy35.html) and [3.6](https://www.pjrc.com/store/teensy36.html)  ([4.1](https://www.pjrc.com/store/teensy41.html) pending)  
+ * Adafruit [Feather 32u4 Adalogger](https://www.adafruit.com/product/2795) and [Feather M0 Adalogger](https://www.adafruit.com/product/2796)
+
+PDDuino may be used with any machine that has TPDD client software or firmware.  
+ * TRS-80/TANDY Models 100, 102, 200, WP-2  
+ * NEC PC-8201, PC-8201A, PC-8300, PC-8401A, PC-8500  
+ * Olivetti M10  
+ * Kyotronic KC-85  
+ * [Cambridge Z88](http://www.rakewell.com/xob/xob.shtml)  
+ * [Brother knitting machines](http://www.k2g2.org/wiki:brother_fb-100)  
+ * [Anything with a python interpreter](https://trs80stuff.net/tpdd/)
+
 
 ## Requirements / Setup
 ### Software
-See [Arduino_IDE_Setup.txt](Arduino_IDE_Setup.txt)
+[Arduino IDE Setup](Arduino_IDE_Setup.txt)
 
 ### Hardware
 * Arduino-compatible microcontroller board with at least one hardware serial port
@@ -69,10 +82,13 @@ You would only need these for bread-boarding or building in a box attached by a 
 
  TODO: find a ttl-serial module that actually supports the dsr/dtr lines.  
   https://www.pololu.com/product/126   breadboard-friendly single row of pins  
-  https://www.amazon.com/dp/B0190WSINY/   needs jumper wires to a breadboard  
+  https://www.amazon.com/dp/B0190WSINY/  double row pin header needs jumper wires to a breadboard  
   Female plug, DCE pinout, needs a different serial cable, or adapters.
 
 ## Usage:
+### Normal usage
+Use as you would use a real [TPDD](http://tandy.wiki/TPDD) or any other [TPDD emulator](http://tandy.wiki/TPDD_Emulators).
+
 ### Bootstrap Procedure
 Assuming you are using a [MounT](https://github.com/bkw777/MounT) adapter to host a Feather or Teensy.  
 Assuming you are using the [BCR-USB](https://github.com/bkw777/BCR_Breakout) adapter to power the MounT.  
@@ -80,26 +96,41 @@ Assuming the portable is a Model 100.
 Assuming you want to install TS-DOS.  
 
 1. Start with the Model 100 turned off.  
- Plug the MounT and BCR adapters into the Model 100 and connect the micro-usb cable from the BCR adapter to the MounT.  
+ Plug the MounT and BCR adapters into the Model 100 and connect the usb cable from the BCR adapter to the MounT.  
  Eject the SD card.
 
-1. Place an ascii format BASIC loader on the root of the SD card, renamed as LOADER.DO.  
+1. Place an ascii format BASIC loader file on the root of the SD card, renamed as LOADER.DO.  
 You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).  
-Example, take ```TS-DOS.100```, and save it as ```LOADER.DO``` on the root of the SD card.  
-Note the two associated files ```TS-DOS.100.pre-install.txt``` and ```TS-DOS.100.post-install.txt``` .
+&nbsp;  
+Example 1: To install TS-DOS on a TRS-80 Model 100: Take [TS-DOS.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/ts-dos/TS-DOS.100), and save it as ```LOADER.DO``` on the root of the SD card.  
+Note the associated [pre-install](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/ts-dos/TS-DOS.100.pre-install.txt) and [post-install](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/ts-dos/TS-DOS.100.post-install.txt) directions.  
+&nbsp;  
+Example 2: To install DSKMGR on an Olivetti M10: Take [DSKMGR.M10](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/dskmgr/DSKMGR.M10), and save it as ```LOADER.DO``` on the root of the SD card.  
+Note the associated [pre-install](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/dskmgr/DSKMGR.M10.pre-install.txt) and [post-install](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/dskmgr/DSKMGR.M10.post-install.txt) directions.  
 
 1. Turn on the Model 100 while the SD card is still ejected.  
-The Teensy or Feather should now have a steady slow blinking LED, indication it's waiting for an SD card.  
+The Arduino board should now have a steady slow blinking LED, indicating it's waiting for an SD card.  
 Don't insert the SD card yet.
 
-1. In BASIC, type ```RUN "COM:98N1E"``` and press Enter.
+1. In BASIC, type ```RUN "COM:98N1E"``` and press Enter.  
+(Or follow the pre-install directions are for the loader you're using. The exact command is different for different models of computer. This example is for TRS-80 Model 100 or 102.)
 
 1. Insert the SD card.
 
-1. Wait until the LED light goes out, then wait while the loader runs and eventually follow the on-screen directions.
+1. Wait while the loader program is transferred and then executed.  
+For approximately 20 seconds (exact time depends on the size of LOADER.DO) there will be no indication of acivity on the computer, and the LED on the Arduino board will be ON solid and not blinking. The loader program is being sent to the computer during this time.  
+&nbsp;  
+After the LED goes out, the computer executes the program that was just loaded.  
+&nbsp;  
+Follow any on-screen directions (different loaders have different prompts & directions), and the post-install directions for the loader you're using.  
+In the case if TS-DOS, this would be:  
+&nbsp;&nbsp;Type ```SAVE "TS-DOS"``` and press Enter.  
+&nbsp;&nbsp;Exit BASIC (press ```F8``` or type ```MENU```)  
+&nbsp;&nbsp;Run ```TS-DOS.BA``` from the main menu.  
+&nbsp;&nbsp;Use ```F2-Kill``` to delete ```TMP.DO```  
 
-You now have the ram version of TS-DOS installed! You can immediately use it to browse the contents of the SD card.  
-Exit BASIC and run TS-DOS.BA from the main menu. You can delete the TMP.DO file.
+You now have the ram version of TS-DOS (or other tpdd client) installed.  
+You can immediately use it to browse the contents of the SD card.
 
 ## Notes
 ### Ultimate ROM II TS-DOS loader
@@ -132,8 +163,9 @@ On RUN "COM:98N1E", pins 4 and 20 go to +5v.
 
 * Doesn't work with TEENY. (hangs)
 
-* File transfers don't work with TpddTool.py .<br>
-  Seems to be due to mis-matches in handling the space-padding in the filenames?
+* File transfers don't work with TpddTool.py .  
+Seems to be due to mis-matches in handling the space-padding in the filenames?  
+Problem may be at least partly in TpddTool.py
 
 * Some kind of working directory initial/default state issue, which affects Ultimate Rom II loading DOS100.CO on the fly.
 If you have DOS100.CO in ram, then UR-2 works all the time, because it will use that copy if available.  
@@ -154,22 +186,22 @@ Goes away if you try to open PARENT.<> again when you're already in root.
 
 ## Change-log
 
-### 20200819 b.kenyon.w@gmail.com
+### 20200819
 * Moved PCB to its own [repo](https://github.com/bkw777/MounT)  
 * Added TPDD2-style bootstrap function  
 
-### 20200817 b.kenyon.w@gmail.com
+### 20200817
 * Added PCB adapter "PDDuino_Feather".  
  Takes the place of the serial cable and ttl-rs232 module.  
  Supports Adafruit Feather 32u4 Adalogger and Adafruit Feather M0 Adalogger.  
 
-### 20191025 b.kenyon.w@gmail.com
+### 20191025
 * Support Adafruit Feather M0 Adalogger  
  needs "compiler.cpp.extra_flags=-fpermissive" in ~/.arduino15/packages/adafruit/hardware/samd/1.5.4/platform.local.txt
 * Combine all boards supported into the same code  
  Time to break this out into a config.h file?
 
-### 20180921 b.kenyon.w@gmail.com
+### 20180921
 * Support Teensy 3.5/3.6
 * Support Adafruit Feather 32u4 Adalogger
 * Macro-ify all serial port access, debug and tpdd client
@@ -177,7 +209,7 @@ Goes away if you try to open PARENT.<> again when you're already in root.
 * dmeLabel[] & setLabel() TS-DOS shows current working dir in top-right corner
 * disk-activity led
 
----
+### SD2TPDD - PDDuino
 
 ### v0.2 (7/27/2018)
 * Added DME support
