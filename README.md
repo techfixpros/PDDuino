@@ -100,7 +100,7 @@ Assuming you want to install TS-DOS.
  Eject the SD card.
 
 1. Place an ascii format BASIC loader file on the root of the SD card, renamed as LOADER.DO.  
-You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/master/clients).  
+You can use any of the loader files from [dlplus](https://github.com/bkw777/dlplus/tree/master/clients).  
 &nbsp;  
 Example 1: To install TS-DOS on a TRS-80 Model 100: Take [TS-DOS.100](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/ts-dos/TS-DOS.100), and save it as ```LOADER.DO``` on the root of the SD card.  
 Note the associated [pre-install](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/ts-dos/TS-DOS.100.pre-install.txt) and [post-install](https://raw.githubusercontent.com/bkw777/dlplus/master/clients/ts-dos/TS-DOS.100.post-install.txt) directions.  
