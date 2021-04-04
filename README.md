@@ -186,6 +186,9 @@ Goes away if you try to open PARENT.<> again when you're already in root.
 
 ## Change-log
 
+### 20210404
+* 0.5.0 Incorporated Jim Brain's replacement return_*() and main loop.
+
 ### 20200819
 * Moved PCB to its own [repo](https://github.com/bkw777/MounT)  
 * Added TPDD2-style bootstrap function  

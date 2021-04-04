@@ -1,5 +1,5 @@
 // Append a string to directory[]
-void directoryAppend(char* c){
+void directoryAppend(const char* c){
   bool t = false;
   byte i = 0x00;
   byte j = 0x00;
@@ -43,7 +43,7 @@ void copyDirectory(){ //Makes a copy of the working directory to a scratchpad
 // We could just read directory[] directly instead of passng s[]
 // but this way we can pass arbitrary values later. For example
 // FAT volume label, RTC time, battery level, ...
-void setLabel(char* s) {
+void setLabel(const char* s) {
   byte z = DIRECTORY_SZ;
   byte j = z;
 
@@ -57,7 +57,10 @@ void setLabel(char* s) {
   while(s[j] != '/' && j > 0x00) j--; // seek to next slash
 
   // copy 6 chars, up to z or null, space pad
-  for(byte i=0x00 ; i<0x06 ; i++) if(s[++j]>0x00 && j<=z) dmeLabel[i] = s[j]; else dmeLabel[i] = 0x20;
+  for(byte i=0x00 ; i<0x06 ; i++) {
+     if(s[j]>0x00 && j<=z) dmeLabel[i] = s[j]; else dmeLabel[i] = 0x20;
+     j++;
+  }
   dmeLabel[0x06] = 0x00;
 
   DEBUG_PRINT(F("dmeLabel[")); DEBUG_PRINT(dmeLabel); DEBUG_PRINTL(F("]"));
@@ -69,21 +72,25 @@ void setLabel(char* s) {
  *
  */
 
-void tpddWrite(char c){  //Outputs char c to TPDD port and adds to the checksum
+void tpddWrite(char c){  // Outputs char c to TPDD port and adds to the checksum
   checksum += c;
   CLIENT.write(c);
 }
 
-void tpddWriteString(char* c){  //Outputs a null-terminated char array c to the TPDD port
+void tpddWriteString(char* c){  // Outputs a null-terminated char array c to the TPDD port
   byte i = 0x00;
-  while(c[i]!=0x00){
-    checksum += c[i];
-    CLIENT.write(c[i]);
-    i++;
+  while(c[i] != 0x00){
+    tpddWrite(c[i++]);
   }
 }
 
-void tpddSendChecksum(){  //Outputs the checksum to the TPDD port and clears the checksum
-  CLIENT.write(checksum^0xFF);
+//void tpddWriteBuf(uint8_t *data, uint16_t len) {
+//  for(uint16_t i = 0; i < len; i++) {
+//    tpddWrite(data[i]);
+//  }
+//}
+
+void tpddSendChecksum(){  // Outputs the checksum to the TPDD port and clears the checksum
+  CLIENT.write(checksum ^ 0xFF);
   checksum = 0x00;
 }

@@ -39,9 +39,6 @@ void setup() {
   CLIENT.begin(19200);
   CLIENT.flush();
 
-  // clear the main data buffer
-  for(byte i=0x00;i<FILE_BUFFER_SZ;++i) dataBuffer[i] = 0x00;
-
   // info dump
   DEBUG_PRINTL(F("\r\n-----------[ " SKETCH_NAME " " SKETCH_VERSION " ]------------"));
   DEBUG_PRINTL(F("BOARD_NAME: " BOARD_NAME));

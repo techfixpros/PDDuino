@@ -13,23 +13,23 @@ void return_normal(byte errorCode){
 }
 
 // Sends a reference return to the TPDD port
-void returnReference(char *name, bool isDir, uint16_t size ) {
+void returnReference(const char *name, bool isDir, uint16_t size ) {
   uint8_t i, j;
 
   DEBUG_PRINTL(F("returnReference()"));
 
-  tpddWrite(RET_DIRECTORY);    //Return type (reference)
-  tpddWrite(0x1C);    //Data size (1C)
+  tpddWrite(RET_DIRECTORY);    // Return type (reference)
+  tpddWrite(0x1C);    // Data size (1C)
   if(name == NULL) {
     for(i = 0; i < FILENAME_SZ; i++)
-      tpddWrite(0x00);  //Write the reference file name to the TPDD port
+      tpddWrite(0x00);  // Write the reference file name to the TPDD port
   } else {
     if(isDir && DME) { // handle dirname.
       for(i = 0; (i < 6) && (name[i] != 0); i++)
         tpddWrite(name[i]);
       for(;i < 6; i++)
         tpddWrite(' '); // pad out the dir
-      tpddWrite('.');  //Tack the expected ".<>" to the end of the name
+      tpddWrite('.');  // Tack the expected ".<>" to the end of the name
       tpddWrite('<');
       tpddWrite('>');
       j = 9;
@@ -48,17 +48,17 @@ void returnReference(char *name, bool isDir, uint16_t size ) {
       tpddWrite(0);  // pad out
     }
   }
-  tpddWrite(0);  //Attribute, unused
-  tpddWrite((uint8_t)(size >> 8));  //File size most significant byte
-  tpddWrite((uint8_t)(size & 0xFF)); //File size least significant byte
-  tpddWrite(0x80);  //Free sectors, SD card has more than we'll ever care about
-  tpddSendChecksum(); //Checksum
+  tpddWrite(0);  // Attribute, unused
+  tpddWrite((uint8_t)(size >> 8));  // File size most significant byte
+  tpddWrite((uint8_t)(size & 0xFF)); // File size least significant byte
+  tpddWrite(0x80);  // Free sectors, SD card has more than we'll ever care about
+  tpddSendChecksum(); // Checksum
 
 }
 
 void return_reference() {
   DEBUG_PRINTL(F("return_reference()"));
-  entry.getName(tempRefFileName,FILENAME_SZ);  //Save the current file entry's name to the reference file name buffer
+  entry.getName(tempRefFileName,FILENAME_SZ);  // Save the current file entry's name to the reference file name buffer
   returnReference(tempRefFileName, entry.isDirectory(), entry.fileSize());
 #if DEBUG > 1
   DEBUG_PRINTL("R:Ref");
@@ -68,7 +68,7 @@ void return_reference() {
 // Sends a blank reference return to the TPDD port
 void return_blank_reference() {
   DEBUG_PRINTL(F("return_blank_reference()"));
-  entry.getName(tempRefFileName,FILENAME_SZ);  //Save the current file entry's name to the reference file name buffer
+  entry.getName(tempRefFileName,FILENAME_SZ);  // Save the current file entry's name to the reference file name buffer
   returnReference(NULL, false, 0);
 #if DEBUG > 1
   DEBUG_PRINTL("R:BRef");
@@ -87,7 +87,7 @@ void return_parent_reference(){
  */
 
 void command_reference(){ // Reference command handler
-  byte searchForm = dataBuffer[(byte)(tail+0x1D)];  // The search form byte exists 29 bytes into the command
+  byte searchForm = _cmd_buffer[0x19]; // The search form byte exists 0x19 bytes into the command
   byte refIndex = 0x00;  // Reference file name index
 
   DEBUG_PRINTL(F("command_reference()"));
@@ -97,13 +97,13 @@ void command_reference(){ // Reference command handler
   DEBUG_PRINTIL(searchForm,HEX);
 #endif
 
-  if(searchForm == 0x00){ // Request entry by name
-    for(byte i=0x04; i<0x1C; i++){  // Put the reference file name into a buffer
-      if(dataBuffer[(tail+i)]!=0x20){ // If the char pulled from the command is not a space character (0x20)...
-        refFileName[refIndex++]=dataBuffer[(tail+i)]; // write it into the buffer and increment the index.
+  if(searchForm == SF_NAME){ // Request entry by name
+    for(uint8_t i = 0; i < FILENAME_SZ; i++){  // Put the reference file name into a buffer
+      if(_cmd_buffer[i] != ' '){ // If the char pulled from the command is not a space character (0x20)...
+        refFileName[refIndex++]=_cmd_buffer[i]; // write it into the buffer and increment the index.
       }
     }
-    refFileName[refIndex]=0x00; // Terminate the file name buffer with a null character
+    refFileName[refIndex] = 0x00; // Terminate the file name buffer with a null character
 
 #if DEBUG > 1
     DEBUG_PRINT("Ref: ");
@@ -137,12 +137,12 @@ void command_reference(){ // Reference command handler
 
     upDirectory();  // Strip the reference off of the directory buffer
 
-  }else if(searchForm == 0x01){ // Request first directory block
+  }else if(searchForm == SF_FIRST){ // Request first directory block
     SD_LED_ON
     root.close();
     root = SD.open(directory);
     ref_openFirst();
-  }else if(searchForm == 0x02){ // Request next directory block
+  }else if(searchForm == SF_NEXT){ // Request next directory block
     SD_LED_ON
     root.close();
     root = SD.open(directory);
@@ -156,7 +156,7 @@ void command_reference(){ // Reference command handler
 void ref_openFirst(){
   DEBUG_PRINTL(F("ref_openFirst()"));
   directoryBlock = 0x00; // Set the current directory entry index to 0
-  if(DME && directoryDepth>0x00 && directoryBlock==0x00){ // Return the "PARENT.<>" reference if we're in DME mode
+  if(DME && directoryDepth>0x00){ // Return the "PARENT.<>" reference if we're in DME mode
     SD_LED_OFF
     return_parent_reference();
   }else{
@@ -189,7 +189,9 @@ void ref_openNext(){
 }
 
 void command_open(){  // Opens an entry for reading, writing, or appending
-  byte rMode = dataBuffer[(byte)(tail+0x04)];  // The access mode is stored in the 5th byte of the command
+
+  _mode = (openmode_t)_cmd_buffer[0];  // The access mode is stored in the 1st byte of the command payload
+
   DEBUG_PRINTL(F("command_open()"));
   entry.close();
 
@@ -210,10 +212,10 @@ void command_open(){  // Opens an entry for reading, writing, or appending
         directoryDepth++; // and increment the directory depth index
       }else{  // If the reference isn't a sub-directory, it's a file
         entry.close();
-        switch(rMode){
-          case 0x01: entry = SD.open(directory, FILE_WRITE); break;             // Write
-          case 0x02: entry = SD.open(directory, FILE_WRITE | O_APPEND); break;  // Append
-          case 0x03: entry = SD.open(directory, FILE_READ); break;              // Read
+        switch(_mode){
+          case F_OPEN_WRITE: entry = SD.open(directory, FILE_WRITE); break;
+          case F_OPEN_APPEND: entry = SD.open(directory, FILE_WRITE | O_APPEND); break;
+          case F_OPEN_READ: entry = SD.open(directory, FILE_READ); break;
         }
         upDirectory();
       }
@@ -225,7 +227,7 @@ void command_open(){  // Opens an entry for reading, writing, or appending
     return_normal(ERR_SUCCESS);  // ...send a normal return with no error.
   }else{  // If the file doesn't exist...
     SD_LED_OFF
-    return_normal(ERR_NOFILE);  // ...send a normal return with a "file does not exist" error.
+    return_normal(ERR_NO_FILE);  // ...send a normal return with a "file does not exist" error.
   }
 }
 
@@ -256,11 +258,9 @@ void command_read(){  // Read a block of data from the currently open entry
 }
 
 void command_write(){ // Write a block of data from the command to the currently open entry
-  byte commandDataLength = dataBuffer[(byte)(tail+0x03)];
-
   DEBUG_PRINTL(F("command_write()"));
   SD_LED_ON
-  for(byte i=0x00; i<commandDataLength; i++) entry.write(dataBuffer[(byte)(tail+0x04+i)]);
+  entry.write(_cmd_buffer, _length);
   SD_LED_OFF
   return_normal(ERR_SUCCESS);  // Send a normal return to the TPDD port with no error
 }
@@ -300,8 +300,6 @@ void command_condition(){ // Not implemented
 }
 
 void command_rename(){  // Renames the currently open entry
-  byte refIndex = 0x00;  // Temporary index for the reference name
-
   DEBUG_PRINTL(F("command_rename()"));
 
   directoryAppend(refFileNameNoDir);  // Push the current reference name onto the directory buffer
@@ -315,13 +313,13 @@ void command_rename(){  // Renames the currently open entry
   copyDirectory();  // Copy the directory buffer to the scratchpad directory buffer
   upDirectory();  // Strip the previous directory reference off of the directory buffer
 
-  for(byte i=0x04; i<0x1C; i++){  // Loop through the command's data block, which contains the new entry name
-      if(dataBuffer[(byte)(tail+i)]!=0x20 && dataBuffer[(byte)(tail+i)]!=0x00){ // If the current character is not a space (0x20) or null character...
-        tempRefFileName[refIndex++]=dataBuffer[(byte)(tail+i)]; // ...copy the character to the temporary reference name and increment the pointer.
-      }
+  uint8_t i;
+  for(i = 0; i < FILENAME_SZ;i++) {
+    if(_cmd_buffer[i] == 0 || _cmd_buffer[i] == ' ')
+      break;
+    tempRefFileName[i] = _cmd_buffer[i];
   }
-
-  tempRefFileName[refIndex]=0x00; // Terminate the temporary reference name with a null character
+  tempRefFileName[i] = 0x00; // Terminate the temporary reference name with a null
 
   if(DME && entry.isDirectory()){ //      !!!If the entry is a directory, we need to strip the ".<>" off of the new directory name
     if(strstr(tempRefFileName, ".<>") != 0x00){
@@ -358,18 +356,15 @@ void command_DMEreq() {  // Send the dmeLabel
 
   DEBUG_PRINT(F("command_DMEReq(): dmeLabel[")); DEBUG_PRINT(dmeLabel); DEBUG_PRINTL(F("]"));
 
-  if(DME){  // prepend "/" to the root dir label just because my janky-ass setLabel() assumes it
-    if (directoryDepth>0x00) setLabel(directory); else setLabel("/SD:   ");
-    tpddWrite(RET_NORMAL);
-    tpddWrite(0x0B);
-    tpddWrite(0x20);
-    for (byte i=0x00 ; i<0x06 ; i++) tpddWrite(dmeLabel[i]);
-    tpddWrite('.');
-    tpddWrite('<');
-    tpddWrite('>');
-    tpddWrite(0x20);
-    tpddSendChecksum();
-  }else{
-    return_normal(ERR_PARM);
-  }
+  DME = true;
+  if (directoryDepth>0x00) setLabel(directory); else setLabel(ROOT_DME_LABEL);
+  tpddWrite(RET_NORMAL);
+  tpddWrite(0x0B);
+  tpddWrite(0x20);
+  for (byte i=0x00 ; i<0x06 ; i++) tpddWrite(dmeLabel[i]);
+  tpddWrite('.');
+  tpddWrite('<');
+  tpddWrite('>');
+  tpddWrite(0x20);
+  tpddSendChecksum();
 }
