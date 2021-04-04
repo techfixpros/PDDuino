@@ -28,13 +28,14 @@
 #endif
 
 // Allow these to be undefined
-//#define SD_CS_PIN SS			// sd card reader chip-select pin #, sometimes automatic
-//#define SD_CD_PIN 7			// sd card reader card-detect pin #, interrupt & restart if card ejected
-//#define DISABLE_CS 10			// Disable other SPI device on this pin, usully none, assume SD is only SPI device
-//#define SD_SPI_MHZ 12			// override default SPI clock for SD card reader (Adafruit SAMD needs it)
-//#define USE_SDIO			// sd card reader is connected by SDIO instead of SPI (Teensy 3.5/3.6/4.1)
-//#define ENABLE_SLEEP			// hardware sleep while idle
-//#define USE_ALP			// Use ArduinoLowPower instead of avr/sleep.h, SAMD only (Feather M0)
+//#define SD_CS_PIN SS			 // sd card reader chip-select pin #, sometimes automatic
+//#define SD_CD_PIN 7        // sd card reader card-detect pin #, interrupt & restart if card ejected
+//#define SD_CD_PRESENT HIGH // card-detect pin is high or low when card is inserted? (default is high)
+//#define DISABLE_CS 10			 // Disable other SPI device on this pin, usully none, assume SD is only SPI device
+//#define SD_SPI_MHZ 12			 // override default SPI clock for SD card reader (Adafruit SAMD needs it)
+//#define USE_SDIO			     // sd card reader is connected by SDIO instead of SPI (Teensy 3.5/3.6/4.1)
+//#define ENABLE_SLEEP			 // hardware sleep while idle
+//#define USE_ALP			       // Use ArduinoLowPower instead of avr/sleep.h, SAMD only (Feather M0)
 
 // Always supply the default. Only used if ENABLE_SLEEP.
 #if !defined(SLEEP_DELAY)
@@ -43,7 +44,12 @@
 
 // Always supply the default. Only used if ENABLE_SLEEP.
 #if !defined(CLIENT_RX_PIN)
-#define CLIENT_RX_PIN 0			// CLIENT RX pin#, interrupt is attached to wake from sleep
+#define CLIENT_RX_PIN 0      // CLIENT RX pin#, interrupt is attached to wake from sleep
+#endif
+
+// Always supply the default. Only used if SD_CD_PIN.
+#if !defined(SD_CD_PRESENT)
+#define SD_CD_PRESENT HIGH   // What state is the card-detect pin when card is present/inserted?
 #endif
 
 // Activity light for the sd card reader.

@@ -126,6 +126,7 @@ void initCard () {
 
   // Always do this open() & close(), even if we aren't doing the printDirectory()
   // It's needed to get the SdFat library to put the sd card to sleep.
+  // Otherwise we draw unnecessary current while supposed to be idle and asleep.
   root = SD.open(directory);
 #if DEBUG
   DEBUG_PRINTL(F("--- printDirectory(root,0) start ---"));

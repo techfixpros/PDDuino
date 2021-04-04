@@ -130,7 +130,7 @@ void setup() {
 //   finally go back on-line.
 // This comes after initCard(), so that while ejected, we wait in initCard() rather than in a boot loop.
 #if defined(SD_CD_PIN)
-  attachInterrupt(cdInterrupt, restart, LOW);
+  attachInterrupt(cdInterrupt, restart, !SD_CD_PRESENT);
 #endif
 
 // tell client we're open for business

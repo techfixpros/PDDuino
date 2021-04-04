@@ -31,15 +31,15 @@ void sendLoader() {
          c = 0;
         }
 #endif // DEBUG
-        delay(0x05);
+        delay(LOADER_MS_PER_BYTE);
       }
     f.close();
     SD_LED_OFF
     CLIENT.flush();
     CLIENT.write(0x1A);
-#if defined(BOARD_FEATHERM0)    // no idea why but it works
-    delay(250);                 // delay alone before 0x1A didn't work
-    CLIENT.write(0x1A);         // needs the double-tap
+#if defined(BOARD_FEATHERM0)    // some kind of bug with M0
+    delay(250);                 // need to send the 0x1A twice, and need to delay between them
+    CLIENT.write(0x1A);         // 2 in a row doesn't work, delay alone before sending 1 doesn't work
 #endif // BOARD_FEATHERM0
     CLIENT.flush();
     CLIENT.end();

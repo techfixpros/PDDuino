@@ -28,6 +28,9 @@
 #define USE_SDIO
 #define ENABLE_SLEEP
 
+// #define SD_CD_PIN 37       // hardware mod: https://photos.app.goo.gl/sGP6qJuHd2QBdYoh9
+// #define SD_CD_PRESENT LOW  // pin is low when card is inserted
+
 // Main LED: PB5
 #define PINMODE_SD_LED_OUTPUT DDRB = DDRB |= 1UL << 5;
 #define SD_LED_ON PORTB |= _BV(5);
