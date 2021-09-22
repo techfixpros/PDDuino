@@ -213,9 +213,9 @@ void command_open(){  // Opens an entry for reading, writing, or appending
       }else{  // If the reference isn't a sub-directory, it's a file
         entry.close();
         switch(_mode){
-          case F_OPEN_WRITE: entry = SD.open(directory, FILE_WRITE); break;
-          case F_OPEN_APPEND: entry = SD.open(directory, FILE_WRITE | O_APPEND); break;
-          case F_OPEN_READ: entry = SD.open(directory, FILE_READ); break;
+          case F_OPEN_WRITE: entry = SD.open(directory, O_WRITE); break;
+          case F_OPEN_APPEND: entry = SD.open(directory, O_WRITE | O_APPEND); break;
+          case F_OPEN_READ: entry = SD.open(directory, O_READ); break;
         }
         upDirectory();
       }
@@ -270,13 +270,13 @@ void command_delete(){  // Delete the currently open entry
   SD_LED_ON
   entry.close();  // Close any open entries
   directoryAppend(refFileNameNoDir);  // Push the reference name onto the directory buffer
-  entry = SD.open(directory, FILE_READ);  // directory can be deleted if opened "READ"
+  entry = SD.open(directory, O_READ);  // directory can be deleted if opened "READ"
 
   if(DME && entry.isDirectory()){
     entry.rmdir();  // If we're in DME mode and the entry is a directory, delete it
   }else{
     entry.close();  // Files can be deleted if opened "WRITE", so it needs to be re-opened
-    entry = SD.open(directory, FILE_WRITE);
+    entry = SD.open(directory, O_WRITE);
     entry.remove();
   }
   SD_LED_OFF
