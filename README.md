@@ -30,14 +30,15 @@ Configs are already included to support the following particularly handy develop
  * Teensy [3.5](https://www.pjrc.com/store/teensy35.html) and [3.6](https://www.pjrc.com/store/teensy36.html)  ([4.1](https://www.pjrc.com/store/teensy41.html) pending)  
  * Adafruit [Feather 32u4 Adalogger](https://www.adafruit.com/product/2795) and [Feather M0 Adalogger](https://www.adafruit.com/product/2796)
 
-PDDuino may be used with any machine that has TPDD client software or firmware.  
+PDDuino may be used with any machine that has [TPDD client](http://tandy.wiki/TPDD_client) software or firmware.  
  * TRS-80/TANDY Models 100, 102, 200, WP-2  
  * NEC PC-8201, PC-8201A, PC-8300, PC-8401A, PC-8500  
  * Olivetti M10  
  * Kyotronic KC-85  
  * [Cambridge Z88](http://www.rakewell.com/xob/xob.shtml)  
  * [Brother knitting machines](http://www.k2g2.org/wiki:brother_fb-100)  
- * [Anything with a python interpreter](https://trs80stuff.net/tpdd/)
+ * [Anything with a python interpreter](https://trs80stuff.net/tpdd/)  
+ * [pdd.sh](https://github.com/bkw777/pdd.sh)  
 
 
 ## Requirements / Setup
