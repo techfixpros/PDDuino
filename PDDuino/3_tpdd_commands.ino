@@ -213,8 +213,8 @@ void command_open(){  // Opens an entry for reading, writing, or appending
       }else{  // If the reference isn't a sub-directory, it's a file
         entry.close();
         switch(_mode){
-          case F_OPEN_WRITE: entry = SD.open(directory, O_WRITE); break;
-          case F_OPEN_APPEND: entry = SD.open(directory, O_WRITE | O_APPEND); break;
+          case F_OPEN_WRITE: entry = SD.open(directory, O_WRITE|O_CREAT|O_TRUNC); break;
+          case F_OPEN_APPEND: entry = SD.open(directory, O_WRITE|O_APPEND); break;
           case F_OPEN_READ: entry = SD.open(directory, O_READ); break;
         }
         upDirectory();
