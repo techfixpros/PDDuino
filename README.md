@@ -18,6 +18,10 @@ Earlier stages:<br>
 
 PDDuino was based originally on [SD2TPDD](https://github.com/tangentdelta/SD2TPDD) by Jimmy Petit.  
 
+DISCLAIMER: This is not a great reference for a TPDD server yet. [dlplus2](github.com/bkw777/dlplus) is.  
+[pdd.sh](github.com/bkw777/pdd.sh) is a good reference for a TPDD client, though not especially easy to follow the bash code since it is written to conform to a purist standard as a stunt more than to be easy to read and follow.  
+The next major TODO is to rewrite this modelled after dlplus as a reference for the correct way to handle each request from the client.  
+
 ## Features
 * Tandy Portable Disk Drive 1 emulation
 * TS-DOS directories<br>
