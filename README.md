@@ -57,13 +57,15 @@ PDDuino may be used with any machine that has [TPDD client](http://tandy.wiki/TP
 * Battery or usb power source for the microcontroller board
 
 These boards have a small form-factor, and sd-card reader built-in:  
-  [Adafruit Feather 32u4 Adalogger](https://learn.adafruit.com/adafruit-feather-32u4-adalogger)<br>
+  [Adafruit Feather 32u4 Adalogger](https://learn.adafruit.com/adafruit-feather-32u4-adalogger) (best choice)<br>
   [Adafruit Feather M0 Adalogger](https://learn.adafruit.com/adafruit-feather-m0-adalogger) (20200916 broken)<br>
   [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)<br>
   [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)<br>
   [Teensy 4.1](https://www.pjrc.com/store/teensy41.html) (not yet tested)
 
   The ideal is the Alalogger 32u4, even though it's old and you can get far more powerful boards for the same or less cost, and you may have to get it from a reseller like Digikey or Mouser, the Adalogger 32u4 is really the optimal choice for several reasons, at least until the glitch with the M0 version is worked out, or one of the new Huzzah boards are supported.
+
+  The Teensy's work well in all the impoprtant ways, but they have symmetrical pin headers so they can be plugged in backwards, don't have battery connectors or chargers, or card-detect switches on the card slots. The extra led next to the card slot on the Adafruit boards is nice for a disk activity light too. But without wifi and with the ability to underclock down to nothing, they draw low enough power that the lack of battery is offset by the fact that it can be powered from the BCR port without destabilizing the computer.
 
 This adapter takes the place of a serial cable, and includes the level-shifter:<br>
   [MounT](https://github.com/bkw777/MounT)
