@@ -63,6 +63,8 @@ These boards have a small form-factor, and sd-card reader built-in:
   [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)<br>
   [Teensy 4.1](https://www.pjrc.com/store/teensy41.html) (not yet tested)
 
+  The ideal is the Alalogger 32u4, even though it's old and you can get far more powerful boards for the same or less cost, and you may have to get it from a reseller like Digikey or Mouser, the Adalogger 32u4 is really the optimal choice for several reasons, at least until the glitch with the M0 version is worked out, or one of the new Huzzah boards are supported.
+
 This adapter takes the place of a serial cable, and includes the level-shifter:<br>
   [MounT](https://github.com/bkw777/MounT)
 
