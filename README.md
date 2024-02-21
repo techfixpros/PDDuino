@@ -32,7 +32,7 @@ PDDuino runs on most any Arduino-compatible microcontroller.
 
 Configs are already included to support the following particularly handy development boards that have a small form factor, built-in usb power & console, and built-in SD-card reader, and which are supported by [MounT](https://github.com/bkw777/MounT) and [BCR_Breakout](https://github.com/bkw777/BCR_Breakout) for the serial connection, power, and physical attachment to the computer.  
  * Teensy [3.5](https://www.pjrc.com/store/teensy35.html) and [3.6](https://www.pjrc.com/store/teensy36.html)  ([4.1](https://www.pjrc.com/store/teensy41.html) pending)  
- * Adafruit [Feather 32u4 Adalogger](https://www.adafruit.com/product/2795) and [Feather M0 Adalogger](https://www.adafruit.com/product/2796)
+ * Adafruit [Feather 32u4 Adalogger](https://www.adafruit.com/product/2795)(most recommended) and [Feather M0 Adalogger](https://www.adafruit.com/product/2796)
 
 PDDuino may be used with any machine that has [TPDD client](http://tandy.wiki/TPDD_client) software or firmware.  
  * TRS-80/TANDY Models 100, 102, 200, WP-2  
